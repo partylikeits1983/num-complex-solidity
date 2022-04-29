@@ -1,6 +1,6 @@
 # # num-complex_solidity
 
-`Complex` numbers for Rust.
+`Complex` numbers for Solidity.
 
 This library is in development (i.e. not extensively tested for deploying on the Ethereum mainnet).
 
