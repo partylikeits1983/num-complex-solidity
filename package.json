@@ -1,0 +1,12 @@
+{
+  "name": "ComplexNumbersSolidity",
+  "version": "1.0.0",
+  "description": "ComplexNumbersSolidity",
+  "main": "index.js",
+  "author": "Alexander Lee",
+  "license": "MIT",
+  "dependencies": {
+    "@prb/math": "^2.5.0",
+    "hardhat": "^2.9.3"
+  }
+}
