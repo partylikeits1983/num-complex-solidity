@@ -1,8 +1,14 @@
 pragma solidity ^0.8.12;
 
+/// @title num_complex_solidity
+/// @author Alexander John Lee
+/// @notice Solidity library offering basic complex number functions where inputs and outputs are
+/// signed integers. 
+
+/// Huge thanks to the authors of the the mds1/solidity-trigonometry and prb/math repositories
+
 import "@prb/math/contracts/PRBMathSD59x18.sol";
 import "./Trigonometry.sol";
-
 
 library Complex {
     using PRBMathSD59x18 for int256;
@@ -156,7 +162,7 @@ library Complex {
     // @dev COMPLEX NATURAL LOGARITHM (STATUS: WORKING)
     function complexLN(int re, int im) public pure returns (int,int) {
         int T;
-        
+
         (re, T) = toPolar(re,im);
 
         re = re.ln();
@@ -241,6 +247,8 @@ library Complex {
     // IN PROGRESS!!
     // @dev COMPLEX POWER USING DEMOIVRE'S FORUMULA (STATUS: NEEDS CHECKING) - hint 1e18 
     // WARNING MUST ADD CHECKER OF MAX VALS FOR INPUT 
+
+    /*
     function complexPOW(int re, int im, int n) public returns (int,int) {
 
         int r = r2(re, im);
@@ -255,6 +263,7 @@ library Complex {
 
         return (re,im);
     }
+    */
     
     // @dev DIVIDE INPUT BY 1e18
     function normalizeAmount(int x) public pure returns (int) {
