@@ -2,7 +2,7 @@
 
 `Complex` numbers for Solidity.
 
-This library is in development (i.e. not extensively tested for deploying on the Ethereum mainnet).
+This library is in development (i.e. not extensively tested for deployment on the Ethereum mainnet). Please feel free to make a pull request with added functionality. 
 
 Version 1.0
 
