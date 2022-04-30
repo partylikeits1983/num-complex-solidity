@@ -1,4 +1,4 @@
-# num-complex_solidity
+# num_complex_solidity
 
 `Complex` numbers for Solidity.
 
