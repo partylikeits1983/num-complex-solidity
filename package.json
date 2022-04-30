@@ -1,5 +1,5 @@
 {
-  "name": "@ajl/complex_solidity",
+  "name": "@ajl/complex_sol",
   "version": "1.0.0",
   "description": "ComplexNumbersSolidity",
   "main": "index.js",
