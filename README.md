@@ -28,6 +28,33 @@ Version 1.0
 
 
 
+# Usage
+
+WIth npm:
+
+```bash
+$ npm i @partylikeits1983/complex_sol
+```
+
+
+```solidity
+// SPDX-License-Identifier: Unlicense
+pragma solidity ^0.8.12;
+
+import "@partylikeits1983/complex_sol/contracts/Complex.sol";
+
+contract model {
+    
+    function test(int re, int im) public returns (int,int) {
+
+        (re,im) = Complex.complexLN(re,im);
+
+        return (re,im);
+    }
+
+```
+
+
 
 ## Acknowledgements
 
