@@ -8,8 +8,25 @@ library Complex {
     using PRBMathSD59x18 for int256;
 
     // @dev COMPLEX MATH FUNCTIONS WITH 2 z INPUTS
-    // @dev fractions only i.e. < 1e18
-    function mul2(int re, int im, int re1, int im1) public pure returns (int,int) {
+
+    // @dev ADDITION
+    function add(int re, int im, int re1, int im1) public pure returns (int,int) {
+        re += re1;
+        im += im1;
+
+        return (re,im);
+    }
+
+    // @dev SUBTRACTION
+    function sub(int re, int im, int re1, int im1) public pure returns (int,int) {
+        re -= re1;
+        im -= im1;
+
+        return (re,im);
+    }
+
+    // @dev MULTIPLICATION
+    function mul(int re, int im, int re1, int im1) public pure returns (int,int) {
         int a = re * re1;
         int b = im * im1;
         int c = im * re1;
@@ -24,7 +41,8 @@ library Complex {
         return (re,im);
     }
 
-    function div2(int re, int im, int re1, int im1) public pure returns (int,int) {
+    // @dev DIVISION
+    function div(int re, int im, int re1, int im1) public pure returns (int,int) {
         int numA = re * re1 + im * im1;
         int den = re1**2 + im1**2;
         int numB = im * re1 - re * im1;
@@ -33,32 +51,6 @@ library Complex {
         im = (numB * 1e18) / den;
 
         return (re,im);
-    }
-
-    function sub2(int re, int im, int re1, int im1) public pure returns (int,int) {
-        re -= re1;
-        im -= im1;
-
-        return (re,im);
-    }
-
-    function add2(int re, int im, int re1, int im1) public pure returns (int,int) {
-        re += re1;
-        im += im1;
-
-        return (re,im);
-    }
-
-    // @dev SQUARE ROOT FROM PRB LIBRARY TEST FUNCTIONS
-    /// @dev Assuming x = 1e18 => returns 1e18
-    function PRBsqrt(int256 x) public pure returns (int256 y) {
-        y = x.sqrt();
-        return y;
-    }
-
-    // @dev NATURAL LOGARITHM PRB LIBRARY
-    function PRBln(int256 x) external pure returns (int256 result) {
-        result = x.ln();
     }
 
     // @dev COMPLEX EXPONENTIAL (STATUS: WORKING)
@@ -155,31 +147,16 @@ library Complex {
         }
     }
 
-    /*
-    // @dev COMPLEX LOG (DEPRECATED)
-    function complexLog(int re,int im) public pure returns (int,int) {
-        
-        /// Returns the logarithm of z with respect to an arbitrary base.
-        // formula: log_y(x) = log_y(ρ e^(i θ))
-        // = log_y(ρ) + log_y(e^(i θ)) = log_y(ρ) + ln(e^(i θ)) / ln(y)
-        // = log_y(ρ) + i θ / ln(y)
-        /*
-        #[inline]
-        pub fn log(self, base: T) -> Self {
-            let (r, theta) = self.to_polar();
-            Self::new(r.log(base), theta / base.ln())
-        }
-        
-        (int re, int T) = toPolar(re,im);
-        re = re.ln();
-        return (re, im);
+    // @dev PRECISE ATAN2(Y,X) FROM range -1 to 1 (STATUS: WORKING)
+    function atan1to1(int x) public pure returns (int y) {
+        int y = ((7.85e17 * x) / 1e18) - (((x*(x - 1e18)) / 1e18) * (2.447e17 + ((6.63e16*x)/1e18))) / 1e18;
+        return y;
     }
-    */
 
     // @dev COMPLEX NATURAL LOGARITHM (STATUS: WORKING)
     function complexLN(int re, int im) public pure returns (int,int) {
         int T;
-
+        
         (re, T) = toPolar(re,im);
 
         re = re.ln();
@@ -187,32 +164,6 @@ library Complex {
 
         return (re,im);
     }
-
-    /* (DEPRECATED)
-    // @dev ARCTANGENT HANDLER
-    // @dev handle if abs(x) is greater than 1
-    function atan(int x) public pure returns (int y) {
-        if (x.abs() <= 1e18) {
-            y = atan1to1(x);
-        }
-        else {
-            y = atanLookup1toINF(x);
-        }
-        //return y;
-    }
-    // @dev abs(x) > 1 returns 1.5
-    // @dev returns 1.5
-    function atanLookup1toINF(int x) public  pure returns (int y) {
-         return 15e17;
-    }
-    // @dev -1 TO 1 ARCTANGENT FUNCTION
-    // @dev from 0 to 1 
-    // needs abs(x) functionality 
-    function atan1to1(int x) public pure returns (int y) {
-        int y = ((7.85e17 * x) / 1e18) - (((x*(x - 1e18)) / 1e18) * (2.447e17 + ((6.63e16*x)/1e18))) / 1e18;
-        return y;
-    }
-    */
 
     // @dev COMPLEX SQUARE ROOT (STATUS: if re & im > 0 WORKING) 
     function complexSQRT(int re, int im) public pure returns (int,int) {
@@ -258,7 +209,6 @@ library Complex {
         return (re, im);
     }
 
-
     // @dev x^n
     // WARNING REQUIRES TESTING (STATUS: REQUIRES TESTING)
     function intEXP(int si, int sn) public pure returns(int) {
@@ -279,7 +229,7 @@ library Complex {
         return si;
     }
 
-    /*
+    /* PYTHON logic
     z = complex(-2,2)
     math.atan2(2,-2)
     r,theta = cmath.polar(z)
@@ -288,12 +238,9 @@ library Complex {
     im = r**n * (math.sin(n*theta))
     */
 
-
     // IN PROGRESS!!
     // @dev COMPLEX POWER USING DEMOIVRE'S FORUMULA (STATUS: NEEDS CHECKING) - hint 1e18 
     // WARNING MUST ADD CHECKER OF MAX VALS FOR INPUT 
-
-    /*
     function complexPOW(int re, int im, int n) public returns (int,int) {
 
         int r = r2(re, im);
@@ -308,7 +255,6 @@ library Complex {
 
         return (re,im);
     }
-    */
     
     // @dev DIVIDE INPUT BY 1e18
     function normalizeAmount(int x) public pure returns (int) {
@@ -322,11 +268,71 @@ library Complex {
         return x;
     }
 
+    // @dev GAS TEST IN LOOP TEST FUNCTION (not for production)
     function gasTest(int re, int im, int runs) public pure returns (int,int) {
         for (int i = 0; i < runs; i++) {
             (re,im) = complexLN(re,im);
         }
         return (re,im);
     }
+
+    // @dev SQUARE ROOT FROM PRB LIBRARY TEST FUNCTIONS
+    /// @dev Assuming x = 1e18 => returns 1e18
+    function PRBsqrt(int256 x) public pure returns (int256 y) {
+        y = x.sqrt();
+        return y;
+    }
+
+    // @dev NATURAL LOGARITHM PRB LIBRARY
+    function PRBln(int256 x) external pure returns (int256 result) {
+        result = x.ln();
+    }
+
+    /* (DEPRECATED)
+    // @dev ARCTANGENT HANDLER
+    // @dev handle if abs(x) is greater than 1
+    function atan(int x) public pure returns (int y) {
+        if (x.abs() <= 1e18) {
+            y = atan1to1(x);
+        }
+        else {
+            y = atanLookup1toINF(x);
+        }
+        //return y;
+    }
+    // @dev abs(x) > 1 returns 1.5
+    // @dev returns 1.5
+    function atanLookup1toINF(int x) public  pure returns (int y) {
+         return 15e17;
+    }
+    // @dev -1 TO 1 ARCTANGENT FUNCTION
+    // @dev from 0 to 1 
+    // needs abs(x) functionality 
+    function atan1to1(int x) public pure returns (int y) {
+        int y = ((7.85e17 * x) / 1e18) - (((x*(x - 1e18)) / 1e18) * (2.447e17 + ((6.63e16*x)/1e18))) / 1e18;
+        return y;
+    }
+    */
+
+        /*
+    // @dev COMPLEX LOG (DEPRECATED)
+    function complexLog(int re,int im) public pure returns (int,int) {
+        
+        /// Returns the logarithm of z with respect to an arbitrary base.
+        // formula: log_y(x) = log_y(ρ e^(i θ))
+        // = log_y(ρ) + log_y(e^(i θ)) = log_y(ρ) + ln(e^(i θ)) / ln(y)
+        // = log_y(ρ) + i θ / ln(y)
+        /*
+        #[inline]
+        pub fn log(self, base: T) -> Self {
+            let (r, theta) = self.to_polar();
+            Self::new(r.log(base), theta / base.ln())
+        }
+        
+        (int re, int T) = toPolar(re,im);
+        re = re.ln();
+        return (re, im);
+    }
+    */
 
 }
