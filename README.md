@@ -58,7 +58,7 @@ contract model {
 
 ## Acknowledgements
 
-Big thanks to the authors of the the - [mds1/solidity-trigonometry](https://github.com/mds1/solidity-trigonometry) and the [prb/math ](https://github.com/paulrberg/prb-math) repositories
+Big thanks to the authors of the the - [mds1/solidity-trigonometry](https://github.com/mds1/solidity-trigonometry) and the [prb-math](https://github.com/paulrberg/prb-math) repositories
 
 
 ## Sponsor this Repository

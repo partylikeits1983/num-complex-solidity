@@ -1961,6 +1961,10 @@ solc@0.7.3:
     semver "^5.5.0"
     tmp "0.0.33"
 
+"solidity-trigonometry@https://github.com/mds1/solidity-trigonometry.git":
+  version "0.0.0"
+  resolved "https://github.com/mds1/solidity-trigonometry.git#1c7a87bccc5c48be59804a39c8d615dbd7ca8dd5"
+
 source-map-support@^0.5.13:
   version "0.5.21"
   resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.21.tgz#04fe7c7f9e1ed2d662233c28cb2b35b9f63f6e4f"

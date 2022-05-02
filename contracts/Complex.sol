@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.12;
 
 /// @title num_complex_solidity
@@ -19,9 +20,8 @@ library Complex {
         int im;
     }
 
-    complex public Complex;
-    Complex(0,1e18)'
-
+    //complex internal imaginary;
+    //imaginary(0,1e18)
 
     // @dev COMPLEX MATH FUNCTIONS WITH 2 z INPUTS
 
@@ -164,7 +164,7 @@ library Complex {
     }
 
     // @dev PRECISE ATAN2(Y,X) FROM range -1 to 1 (STATUS: WORKING)
-    function atan1to1(int x) public pure returns (int y) {
+    function atan1to1(int x) public pure returns (int) {
         int y = ((7.85e17 * x) / 1e18) - (((x*(x - 1e18)) / 1e18) * (2.447e17 + ((6.63e16*x)/1e18))) / 1e18;
         return y;
     }
@@ -246,29 +246,19 @@ library Complex {
         return si;
     }
 
-
-    /* PYTHON logic
-    z = complex(-2,2)
-    math.atan2(2,-2)
-    r,theta = cmath.polar(z)
-    n = 8
-    re = r**n * (math.cos(n*theta))
-    im = r**n * (math.sin(n*theta))
-    */
-
     // IN PROGRESS!!
     // @dev COMPLEX POWER USING DEMOIVRE'S FORUMULA (STATUS: NEEDS CHECKING) - hint 1e18 
     // WARNING MUST ADD CHECKER OF MAX VALS FOR INPUT 
-    function complexPOW(int re, int im, int n) public returns (int,int) {
+    function complexPOW(int re, int im, int n) public pure returns (int,int) {
        
         (int r, int theta) = toPolar(re,im);
 
         // gas savings
         int rTOn = intEXP(r,n) / 1e18;
-        int nTheta = n * theta
+        int nTheta = n * theta;
 
-        re= rTOn * Trigonometry.cos(nTheta);
-        im = rTOn * Trigonometry.sin(nTheta);
+        re = rTOn * Trigonometry.cos(uint(nTheta));
+        im = rTOn * Trigonometry.sin(uint(nTheta));
 
         return (re,im);
     }
@@ -305,32 +295,6 @@ library Complex {
     function PRBln(int256 x) external pure returns (int256 result) {
         result = x.ln();
     }
-
-    /* (DEPRECATED)
-    // @dev ARCTANGENT HANDLER
-    // @dev handle if abs(x) is greater than 1
-    function atan(int x) public pure returns (int y) {
-        if (x.abs() <= 1e18) {
-            y = atan1to1(x);
-        }
-        else {
-            y = atanLookup1toINF(x);
-        }
-        //return y;
-    }
-    // @dev abs(x) > 1 returns 1.5
-    // @dev returns 1.5
-    function atanLookup1toINF(int x) public  pure returns (int y) {
-         return 15e17;
-    }
-    // @dev -1 TO 1 ARCTANGENT FUNCTION
-    // @dev from 0 to 1 
-    // needs abs(x) functionality 
-    function atan1to1(int x) public pure returns (int y) {
-        int y = ((7.85e17 * x) / 1e18) - (((x*(x - 1e18)) / 1e18) * (2.447e17 + ((6.63e16*x)/1e18))) / 1e18;
-        return y;
-    }
-    */
 
         /*
     // @dev COMPLEX LOG (DEPRECATED)
