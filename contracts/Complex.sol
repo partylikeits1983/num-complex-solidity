@@ -13,6 +13,16 @@ import "./Trigonometry.sol";
 library Complex {
     using PRBMathSD59x18 for int256;
 
+    // init i into struct
+    struct complex {
+        int re;
+        int im;
+    }
+
+    complex public Complex;
+    Complex(0,1e18)'
+
+
     // @dev COMPLEX MATH FUNCTIONS WITH 2 z INPUTS
 
     // @dev ADDITION
@@ -217,6 +227,7 @@ library Complex {
 
     // @dev x^n
     // WARNING REQUIRES TESTING (STATUS: REQUIRES TESTING)
+    // maybe add precision input for this function
     function intEXP(int si, int sn) public pure returns(int) {
         // should change to certain precision i.e. 1e15 => (0.001)^n
         si /= 1e15;
@@ -227,13 +238,14 @@ library Complex {
         ui = ui**un;
 
         // convert back to 1e18 form
-        ui *= 1e15;
+        ui *= 1e12;
 
         // convert back to signed integer type
         si = int(ui);
 
         return si;
     }
+
 
     /* PYTHON logic
     z = complex(-2,2)
@@ -247,23 +259,20 @@ library Complex {
     // IN PROGRESS!!
     // @dev COMPLEX POWER USING DEMOIVRE'S FORUMULA (STATUS: NEEDS CHECKING) - hint 1e18 
     // WARNING MUST ADD CHECKER OF MAX VALS FOR INPUT 
-
-    /*
     function complexPOW(int re, int im, int n) public returns (int,int) {
-
-        int r = r2(re, im);
-        int theta = p_atan2(re, im);
+       
+        (int r, int theta) = toPolar(re,im);
 
         // gas savings
-        int rTOn = r**n / 1e18;
-        int nTheta = n * theta / 1e18;
+        int rTOn = intEXP(r,n) / 1e18;
+        int nTheta = n * theta
 
         re= rTOn * Trigonometry.cos(nTheta);
         im = rTOn * Trigonometry.sin(nTheta);
 
         return (re,im);
     }
-    */
+
     
     // @dev DIVIDE INPUT BY 1e18
     function normalizeAmount(int x) public pure returns (int) {

@@ -20,7 +20,7 @@ Version 1.0
 | p_atan2 | precise tan^-1 | |
 | atan1to1 | tan^-1 from -1 to 1 | |
 | complexSQRT | (a+bi)^(1/2) | |
-| intEXP | (a+bi)^n | |
+| intEXP | dev function int**int | |
 | complexPOW | when n<1 (a+bi)^n | | 
 | normalizeAmount | x / 1e18| | 
 | deNormalizeAmount | x * 1e18 | |
@@ -58,15 +58,19 @@ contract model {
 
 ## Acknowledgements
 
-Big thanks to the authors of the the mds1/solidity-trigonometry and prb/math repositories
+Big thanks to the authors of the the - [mds1/solidity-trigonometry](https://github.com/mds1/solidity-trigonometry) and the [prb/math ](https://github.com/paulrberg/prb-math) repositories
 
 
-## Sponsors
+## Sponsor this Repository
 
 If you would like to support this repository please feel free to make a contribution to this address:
 0x74d6E0f5bff59A2a6b3CDe43c26EcAaC31101722
 
 All proceeds will go to the development of this repository. Any contribution is greatly appreciated.
+
+## Sponsors
+
+[Paul Berg](https://github.com/paulrberg)
 
 
 ## License
