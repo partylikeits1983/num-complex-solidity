@@ -225,38 +225,7 @@ library Complex {
         return (re, im);
     }
 
-    // @dev x^n
-    // WARNING REQUIRES TESTING (STATUS: REQUIRES TESTING)
-    // maybe add precision input for this function
-    function intEXP(int si, int sn) public pure returns(int) {
-        // should change to certain precision i.e. 1e15 => (0.001)^n
-        si /= 1e15;
-        //sn /= 1e15
-        
-        uint ui = uint(si);
-        uint un = uint(sn);
-
-        ui = ui**un;
-
-        // convert back to 1e18 form
-        ui *= 1e12;
-  
-
-
-        // convert back to signed integer type
-        si = int(ui);
-
-        return si;
-    }
-
-
-    function testPRB(int x, int n) public pure returns (int) {
-        int y = x.pow(n);
-        return y;
-
-
-
-    }
+ 
     // IN PROGRESS!!
     // @dev COMPLEX POWER USING DEMOIVRE'S FORUMULA (STATUS: NEEDS CHECKING) - hint 1e18 
     // WARNING MUST ADD CHECKER OF MAX VALS FOR INPUT 
@@ -274,19 +243,6 @@ library Complex {
         return (re,im);
     }
 
-    
-    // @dev DIVIDE INPUT BY 1e18
-    function normalizeAmount(int x) public pure returns (int) {
-        x /= 1e18;
-        return x;
-    }
-
-    // @dev MULTIPLY INPUT BY 1e18
-    function deNormalizeAmount(int x) public pure returns (int) {
-        x *= 1e18;
-        return x;
-    }
-
     // @dev GAS TEST IN LOOP TEST FUNCTION (not for production)
     function gasTest(int re, int im, int runs) public pure returns (int,int) {
         for (int i = 0; i < runs; i++) {
@@ -295,37 +251,5 @@ library Complex {
         return (re,im);
     }
 
-    // @dev SQUARE ROOT FROM PRB LIBRARY TEST FUNCTIONS
-    /// @dev Assuming x = 1e18 => returns 1e18
-    function PRBsqrt(int256 x) public pure returns (int256 y) {
-        y = x.sqrt();
-        return y;
-    }
-
-    // @dev NATURAL LOGARITHM PRB LIBRARY
-    function PRBln(int256 x) external pure returns (int256 result) {
-        result = x.ln();
-    }
-
-        /*
-    // @dev COMPLEX LOG (DEPRECATED)
-    function complexLog(int re,int im) public pure returns (int,int) {
-        
-        /// Returns the logarithm of z with respect to an arbitrary base.
-        // formula: log_y(x) = log_y(ρ e^(i θ))
-        // = log_y(ρ) + log_y(e^(i θ)) = log_y(ρ) + ln(e^(i θ)) / ln(y)
-        // = log_y(ρ) + i θ / ln(y)
-        /*
-        #[inline]
-        pub fn log(self, base: T) -> Self {
-            let (r, theta) = self.to_polar();
-            Self::new(r.log(base), theta / base.ln())
-        }
-        
-        (int re, int T) = toPolar(re,im);
-        re = re.ln();
-        return (re, im);
-    }
-    */
 
 }
