@@ -231,6 +231,7 @@ library Complex {
     function intEXP(int si, int sn) public pure returns(int) {
         // should change to certain precision i.e. 1e15 => (0.001)^n
         si /= 1e15;
+        //sn /= 1e15
         
         uint ui = uint(si);
         uint un = uint(sn);
@@ -239,6 +240,8 @@ library Complex {
 
         // convert back to 1e18 form
         ui *= 1e12;
+  
+
 
         // convert back to signed integer type
         si = int(ui);
@@ -246,6 +249,14 @@ library Complex {
         return si;
     }
 
+
+    function testPRB(int x, int n) public pure returns (int) {
+        int y = x.pow(n);
+        return y;
+
+
+
+    }
     // IN PROGRESS!!
     // @dev COMPLEX POWER USING DEMOIVRE'S FORUMULA (STATUS: NEEDS CHECKING) - hint 1e18 
     // WARNING MUST ADD CHECKER OF MAX VALS FOR INPUT 
@@ -254,11 +265,11 @@ library Complex {
         (int r, int theta) = toPolar(re,im);
 
         // gas savings
-        int rTOn = intEXP(r,n) / 1e18;
-        int nTheta = n * theta;
+        int rTOn = r.pow(n);
+        int nTheta = n * theta / 1e18;
 
-        re = rTOn * Trigonometry.cos(uint(nTheta));
-        im = rTOn * Trigonometry.sin(uint(nTheta));
+        re = rTOn * Trigonometry.cos(uint(nTheta)) / 1e18;
+        im = rTOn * Trigonometry.sin(uint(nTheta)) / 1e18;
 
         return (re,im);
     }
