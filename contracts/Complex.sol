@@ -69,36 +69,12 @@ library Complex {
         return (re,im);
     }
 
-    // @dev COMPLEX EXPONENTIAL (STATUS: WORKING)
-    // formula: e^(a + bi) = e^a (cos(b) + i*sin(b))
-    function complexEXP(int re, int im) public pure returns (int,int) {
-        int r = re.exp();
-        (re, im) = fromPolar(r,im);
-
-        return (re,im);
-    }
-
     // @dev CALCULATE HYPOTENUSE (STATUS: WORKING)
     // r^2 = a^2 + b^2
     function r2(int a, int b) public pure returns (int) {
         a = (a*a) / 1e18;
         b = (b*b) / 1e18;
         return (a+b).sqrt();
-    }
-
-    // @dev CONVERT FROM POLAR TO COMPLEX (STATUS: WORKING)
-    // https://github.com/rust-num/num-complex/blob/3a89daa2c616154035dd27d706bf7938bcbf30a8/src/lib.rs#L182
-    function fromPolar(int r, int T) public pure returns (int re,int im) {
-        // @dev check if T is negative
-        if (T > 0) {
-            re = (r * Trigonometry.cos(uint(T))) / 1e18;
-            im = (r * Trigonometry.sin(uint(T))) / 1e18;
-        }
-        else {
-            re = (r * Trigonometry.cos(uint(T))) / 1e18;
-            // this specific line was a nightmare lol all good now though
-            im = -(r * Trigonometry.sin(uint(T * -1))) / 1e18;
-        }
     }
 
     // @dev CONVERT COMPLEX NUMBER TO POLAR COORDINATES (STATUS: WORKING)
@@ -117,6 +93,21 @@ library Complex {
             int T = p_atan2(im,re) + 180e18;
             return (r,T);
         }  
+    }
+
+    // @dev CONVERT FROM POLAR TO COMPLEX (STATUS: WORKING)
+    // https://github.com/rust-num/num-complex/blob/3a89daa2c616154035dd27d706bf7938bcbf30a8/src/lib.rs#L182
+    function fromPolar(int r, int T) public pure returns (int re,int im) {
+        // @dev check if T is negative
+        if (T > 0) {
+            re = (r * Trigonometry.cos(uint(T))) / 1e18;
+            im = (r * Trigonometry.sin(uint(T))) / 1e18;
+        }
+        else {
+            re = (r * Trigonometry.cos(uint(T))) / 1e18;
+            // this specific line was a nightmare lol all good now though
+            im = -(r * Trigonometry.sin(uint(T * -1))) / 1e18;
+        }
     }
 
     // @dev ATAN2(Y,X) FUNCTION (LESS PRECISE LESS GAS) (STATUS: WORKING)
@@ -225,7 +216,15 @@ library Complex {
         return (re, im);
     }
 
- 
+    // @dev COMPLEX EXPONENTIAL (STATUS: WORKING)
+    // formula: e^(a + bi) = e^a (cos(b) + i*sin(b))
+    function complexEXP(int re, int im) public pure returns (int,int) {
+        int r = re.exp();
+        (re, im) = fromPolar(r,im);
+
+        return (re,im);
+    }
+
     // IN PROGRESS!!
     // @dev COMPLEX POWER USING DEMOIVRE'S FORUMULA (STATUS: NEEDS CHECKING) - hint 1e18 
     // WARNING MUST ADD CHECKER OF MAX VALS FOR INPUT 
@@ -250,6 +249,5 @@ library Complex {
         }
         return (re,im);
     }
-
 
 }

@@ -12,7 +12,6 @@ Version 1.0
 | sub | (a+bi) - (a+bi) | |
 | mul | (a+bi) * (a+bi)| |
 | div | (a+bi) / (a+bi) | |
-| complexEXP | e^(a+bi) | | 
 | r2 | a^2 + b^2 = c^2| |
 | fromPolar | z=r(cosθ+isinθ) | |
 | toPolar | z=r(cosθ+isinθ) | |
@@ -20,10 +19,8 @@ Version 1.0
 | p_atan2 | precise tan^-1 | |
 | atan1to1 | tan^-1 from -1 to 1 | |
 | complexSQRT | (a+bi)^(1/2) | |
-| intEXP | dev function int**int | |
 | complexPOW | when n<1 (a+bi)^n | | 
-| normalizeAmount | x / 1e18| | 
-| deNormalizeAmount | x * 1e18 | |
+| complexEXP | e^(a+bi) | | 
 | gasTest | dev function| |
 
 
