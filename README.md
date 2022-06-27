@@ -6,22 +6,23 @@ This library is in development (i.e. not extensively tested for deployment on th
 
 Version 1.0
 
-| Functions | Description |Gas Estimation |
+| Functions | Description | Gas Estimation |
 | ------ | ------ | ------ |
-| add | (a+bi) + (a+bi) | |
-| sub | (a+bi) - (a+bi) | |
-| mul | (a+bi) * (a+bi)| |
-| div | (a+bi) / (a+bi) | |
-| r2 | a^2 + b^2 = c^2| |
-| fromPolar | z=r(cosθ+isinθ) | |
-| toPolar | z=r(cosθ+isinθ) | |
-| atan2 | tan^-1 | |
-| p_atan2 | precise tan^-1 | |
-| atan1to1 | tan^-1 from -1 to 1 | |
-| complexSQRT | (a+bi)^(1/2) | |
-| complexPOW | when n<1 (a+bi)^n | | 
-| complexEXP | e^(a+bi) | | 
-| gasTest | dev function| |
+| add | (a+bi) + (a+bi) | 698 |
+| sub | (a+bi) - (a+bi) | 687 |
+| mul | (a+bi) * (a+bi)| 2212 |
+| div | (a+bi) / (a+bi) | 4099|
+| r2 | a^2 + b^2 = c^2| 2188 |
+| fromPolar | z=r(cosθ+isinθ) | 2518 |
+| toPolar | z=r(cosθ+isinθ) | 5506 |
+| atan2 | tan^-1 | 2632 |
+| p_atan2 | precise tan^-1 | 3442|
+| atan1to1 | tan^-1 from -1 to 1 | 2496 |
+| complexSQRT | (a+bi)^(1/2) | 8812  |
+| complexPOW | when n<1 (a+bi)^n | 18182 | 
+| complexEXP | e^(a+bi) | 4986 | 
+
+
 
 
 

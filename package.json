@@ -7,7 +7,6 @@
   "license": "MIT",
   "dependencies": {
     "@prb/math": "^2.5.0",
-    "hardhat": "^2.9.3",
     "solidity-trigonometry": "https://github.com/mds1/solidity-trigonometry.git"
   }
 }
