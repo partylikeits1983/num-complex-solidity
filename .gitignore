@@ -3,3 +3,7 @@ cache/
 crytic-export/
 node_modules/
 typechain/
+lib/
+out/
+script/
+cache/
