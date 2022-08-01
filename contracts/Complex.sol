@@ -8,7 +8,7 @@ pragma solidity ^0.8.15;
 
 /// Huge thanks to the authors of the the mds1/solidity-trigonometry and prb/math repositories
 
-import "../lib/prb-math/contracts/PRBMathSD59x18.sol";
+import "contracts/dependencies/prb-math/PRBMathSD59x18.sol";
 import "./Trigonometry.sol";
 
 library Complex {
