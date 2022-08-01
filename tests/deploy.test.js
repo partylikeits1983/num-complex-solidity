@@ -11,6 +11,4 @@ describe("Deploy Complex", () => {
     await complex.deployed();
     console.log("complex library:", complex.address);
   });
-
-  it("Should get the number of positions of user: ", async () => {});
 });

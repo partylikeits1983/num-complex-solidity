@@ -43,28 +43,25 @@ contract Complex {
 
     // @dev MULTIPLICATION
     function mul(int re, int im, int re1, int im1) public pure returns (int,int) {
-        int a = re * re1;
-        int b = im * im1;
-        int c = im * re1;
-        int d = re * im1;
+        int a = re.mul(re1);
+        int b = im.mul(im1);
+        int c = im.mul(re1);
+        int d = re.mul(im1);
 
         re = a-b;
         im = c+d;
-
-        re /= 1e18;
-        im /= 1e18;
 
         return (re,im);
     }
 
     // @dev DIVISION
     function div(int re, int im, int re1, int im1) public pure returns (int,int) {
-        int numA = re * re1 + im * im1;
-        int den = re1**2 + im1**2;
-        int numB = im * re1 - re * im1;
+        int numA = re.mul(re1) + im.mul(im1);
+        int den = re1.pow(2e18) + im1.pow(2e18);
+        int numB = im.mul(re1) - re.mul(im1);
         
-        re = (numA * 1e18) / den;
-        im = (numB * 1e18) / den;
+        re = numA.div(den);
+        im = numB.div(den);
 
         return (re,im);
     }
@@ -72,8 +69,8 @@ contract Complex {
     // @dev CALCULATE HYPOTENUSE (STATUS: WORKING)
     // r^2 = a^2 + b^2
     function r2(int a, int b) public pure returns (int) {
-        a = (a*a) / 1e18;
-        b = (b*b) / 1e18;
+        a = a.mul(a);
+        b = b.mul(b);
         return (a+b).sqrt();
     }
 
