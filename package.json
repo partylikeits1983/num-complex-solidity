@@ -21,6 +21,7 @@
   "homepage": "https://github.com/partylikeits1983/num_complex_solidity#readme",
   "dependencies": {
     "chai": "^4.3.6",
+    "complex.js": "^2.1.1",
     "hardhat": "^2.10.1",
     "hardhat-abi-exporter": "^2.10.0",
     "hardhat-deploy": "^0.11.12",
