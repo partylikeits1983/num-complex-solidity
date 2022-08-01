@@ -11,7 +11,7 @@ pragma solidity ^0.8.15;
 import "contracts/dependencies/prb-math/PRBMathSD59x18.sol";
 import "./Trigonometry.sol";
 
-library Complex {
+contract Complex {
     using PRBMathSD59x18 for int256;
 
     // init i into struct

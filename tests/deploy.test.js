@@ -2,8 +2,8 @@ const { expect } = require("chai");
 const { parseUnits } = require("ethers/lib/utils");
 const { ethers, network } = require("hardhat");
 
-describe("Multiple User Replication", () => {
-  it("Should deploy v1-core and unlock DAI of whale account: ", async () => {
+describe("Deploy Complex", () => {
+  it("Should complex library: ", async () => {
     signers = await ethers.getSigners();
 
     const Complex = await ethers.getContractFactory("Complex");
