@@ -2,25 +2,7 @@
 
 `Complex` numbers for Solidity.
 
-This library is in development (i.e. not extensively tested for deployment on the Ethereum mainnet). Please feel free to make a pull request with added functionality.
-
-Version 1.0
-
-| Functions   | Description         | Gas Estimation |
-| ----------- | ------------------- | -------------- |
-| add         | (a+bi) + (a+bi)     | 698            |
-| sub         | (a+bi) - (a+bi)     | 687            |
-| mul         | (a+bi) \* (a+bi)    | 2212           |
-| div         | (a+bi) / (a+bi)     | 4099           |
-| r2          | a^2 + b^2 = c^2     | 2188           |
-| fromPolar   | z=r(cosθ+isinθ)     | 2518           |
-| toPolar     | z=r(cosθ+isinθ)     | 5506           |
-| atan2       | tan^-1              | 2632           |
-| p_atan2     | precise tan^-1      | 3442           |
-| atan1to1    | tan^-1 from -1 to 1 | 2496           |
-| complexSQRT | (a+bi)^(1/2)        | 8812           |
-| complexPOW  | when n<1 (a+bi)^n   | 18182          |
-| complexEXP  | e^(a+bi)            | 4986           |
+This library is in development. Please feel free to make a pull request with added functionality.
 
 # Usage
 
@@ -46,6 +28,24 @@ contract model {
     }
 
 ```
+
+Version 1.0
+
+| Functions   | Description         | Gas Estimation |
+| ----------- | ------------------- | -------------- |
+| add         | (a+bi) + (a+bi)     | 698            |
+| sub         | (a+bi) - (a+bi)     | 687            |
+| mul         | (a+bi) \* (a+bi)    | 2212           |
+| div         | (a+bi) / (a+bi)     | 4099           |
+| r2          | a^2 + b^2 = c^2     | 2188           |
+| fromPolar   | z=r(cosθ+isinθ)     | 2518           |
+| toPolar     | z=r(cosθ+isinθ)     | 5506           |
+| atan2       | tan^-1              | 2632           |
+| p_atan2     | precise tan^-1      | 3442           |
+| atan1to1    | tan^-1 from -1 to 1 | 2496           |
+| complexSQRT | (a+bi)^(1/2)        | 8812           |
+| complexPOW  | when n<1 (a+bi)^n   | 18182          |
+| complexEXP  | e^(a+bi)            | 4986           |
 
 ## Documentation
 
