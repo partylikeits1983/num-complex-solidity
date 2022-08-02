@@ -47,6 +47,10 @@ contract model {
 
 ```
 
+## Documentation
+
+[num_complex_solidity documentation](docs/index.md)
+
 ## Testing
 
 ```sh
