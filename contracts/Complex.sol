@@ -27,7 +27,8 @@ contract Complex {
     /// @param im imaginary 1
     /// @param re1 real 2
     /// @param im1 imaginary 2
-    /// @return returns real and imaginary part
+    /// @return re real
+    /// @return im imaginary
     function add(int re, int im, int re1, int im1) public pure returns (int,int) {
         re += re1;
         im += im1;
@@ -41,7 +42,8 @@ contract Complex {
     /// @param im imaginary 1
     /// @param re1 real 2
     /// @param im1 imaginary 2
-    /// @return returns real and imaginary part
+    /// @return re real
+    /// @return im imaginary
     function sub(int re, int im, int re1, int im1) public pure returns (int,int) {
         re -= re1;
         im -= im1;
@@ -55,7 +57,8 @@ contract Complex {
     /// @param im imaginary 1
     /// @param re1 real 2
     /// @param im1 imaginary 2
-    /// @return returns real and imaginary part
+    /// @return re real
+    /// @return im imaginary
     function mul(int re, int im, int re1, int im1) public pure returns (int,int) {
         int a = re * re1;
         int b = im * im1;
@@ -77,7 +80,8 @@ contract Complex {
     /// @param im imaginary 1
     /// @param re1 real 2
     /// @param im1 imaginary 2
-    /// @return returns real and imaginary part
+    /// @return re real
+    /// @return im imaginary
     function div(int re, int im, int re1, int im1) public pure returns (int,int) {
         int numA = re * re1 + im * im1;
         int den = re1**2 + im1**2;
@@ -94,7 +98,7 @@ contract Complex {
     /// @dev r^2 = a^2 + b^2
     /// @param a a
     /// @param b b
-    /// @return returns r
+    /// @return r r
     function r2(int a, int b) public pure returns (int) {
         a = a.mul(a);
         b = b.mul(b);
@@ -107,7 +111,8 @@ contract Complex {
     /// @dev // atan vs atan2
     /// @param re real part
     /// @param im imaginary part
-    /// @return returns r,T
+    /// @return r r
+    /// @return T theta
     function toPolar(int re, int im) public pure returns (int,int) {
         int r = r2(re,im);
         //int BdivA = re / im;
@@ -147,7 +152,7 @@ contract Complex {
     /// @notice ATAN2(Y,X) FUNCTION (LESS PRECISE LESS GAS)
     /// @param y y
     /// @param x x 
-    /// @return T 
+    /// @return T T
     function atan2(int y, int x) public pure returns (int T) {
         int c1 = 3141592653589793300/4;
         int c2 = 3*c1;
@@ -173,7 +178,7 @@ contract Complex {
     /// @notice ATAN2(Y,X) FUNCTION (MORE PRECISE MORE GAS)
     /// @param y y
     /// @param x x 
-    /// @return T
+    /// @return T T
     function p_atan2(int y, int x) public pure returns (int T) {
         int c1 = 3141592653589793300/4;
         int c2 = 3*c1;
@@ -198,7 +203,7 @@ contract Complex {
 
     /// @notice PRECISE ATAN2(Y,X) FROM range -1 to 1 (MORE PRECISE LESS GAS)
     /// @param x (y/x)
-    /// @return T
+    /// @return T T
     function atan1to1(int x) public pure returns (int) {
         int y = ((7.85e17 * x) / 1e18) - (((x*(x - 1e18)) / 1e18) * (2.447e17 + ((6.63e16*x)/1e18))) / 1e18;
         return y;
