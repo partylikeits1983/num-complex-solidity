@@ -174,7 +174,7 @@ describe("Deploy Complex", () => {
       "ether"
     );
 
-    expect(result_js).to.be.closeTo(parseFloat(atan2), 0.002);
+    expect(result_js).to.be.closeTo(parseFloat(atan2), 0.01);
   });
 
   it("Should calculate more precise atan2 (1 to 1)", async () => {
@@ -191,7 +191,7 @@ describe("Deploy Complex", () => {
       "ether"
     );
 
-    expect(result_js).to.be.closeTo(parseFloat(atan2), 0.0005);
+    expect(result_js).to.be.closeTo(parseFloat(atan2), 0.001);
   });
 
   it("Should calculate complex ln", async () => {
@@ -213,7 +213,30 @@ describe("Deploy Complex", () => {
       "ether"
     );
 
-    expect(result_js.re).to.be.closeTo(parseFloat(re), 0.005);
-    expect(result_js.im).to.be.closeTo(parseFloat(im), 0.005);
+    expect(result_js.re).to.be.closeTo(parseFloat(re), 0.02);
+    expect(result_js.im).to.be.closeTo(parseFloat(im), 0.02);
+  });
+
+  it("Should calculate complex sqrt", async () => {
+    const c = new Complex(1, 2);
+
+    const result_js = c.sqrt();
+
+    const re1 = ethers.utils.parseEther("1");
+    const im1 = ethers.utils.parseEther("2");
+
+    const result = await complex.complexSQRT(re1, im1);
+
+    const re = ethers.utils.formatUnits(
+      ethers.BigNumber.from(result[0]),
+      "ether"
+    );
+    const im = ethers.utils.formatUnits(
+      ethers.BigNumber.from(result[1]),
+      "ether"
+    );
+
+    expect(result_js.re).to.be.closeTo(parseFloat(re), 0.1);
+    expect(result_js.im).to.be.closeTo(parseFloat(im), 0.1);
   });
 });

@@ -137,11 +137,11 @@ contract Complex {
 
         if (x >= 0) {
             int r = (x - abs_y) * 1e18 / (x + abs_y);
-            T = (1963e14 * r**3) / 1e54 - (9817e14 * r) / 1e18 + c1;
+            T = (1963e14 * r.pow(3e18)) / 1e54 - (9817e14 * r) / 1e18 + c1;
         }
         else{
             int r = (x + abs_y) * 1e18 / (abs_y - x);
-            T = (1963e14 * r**3) / 1e54 - (9817e14 * r) / 1e18 + c2;
+            T = (1963e14 * r.mul(3)) / 1e54 - (9817e14 * r) / 1e18 + c2;
         }
         if (y < 0) {
             return -T;
