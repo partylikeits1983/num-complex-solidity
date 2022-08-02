@@ -4,6 +4,7 @@ require("@nomiclabs/hardhat-waffle");
 require("hardhat-gas-reporter");
 require("hardhat-abi-exporter");
 require("solidity-docgen");
+require("solidity-coverage");
 module.exports = {
   solidity: "0.8.15",
   defaultNetwork: "hardhat",

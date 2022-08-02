@@ -1,5 +1,4 @@
 const { expect, assert } = require("chai");
-const should = require("should");
 const { parseUnits } = require("ethers/lib/utils");
 const { ethers, network } = require("hardhat");
 const Complex = require("complex.js");
@@ -8,6 +7,9 @@ const { sqrt } = require("mathjs");
 describe("Deploy Complex", () => {
   let complex;
 
+  const a = -1;
+  const b = 2;
+
   beforeEach(async () => {
     const Complex = await ethers.getContractFactory("Complex");
     complex = await Complex.deploy();
@@ -15,24 +17,18 @@ describe("Deploy Complex", () => {
 
   it("Should deploy", async () => {
     await complex.deployed();
-    console.log(complex.address);
-  });
-
-  it("Should test complex.js", async () => {
-    const test = new Complex(1, 2);
-    console.log(test);
   });
 
   it("Should add", async () => {
-    const c1 = new Complex(1, 2);
-    const c2 = new Complex(1, 2);
+    const c1 = new Complex(a, b);
+    const c2 = new Complex(a, b);
 
     const result_js = c1.add(c2);
 
-    const re1 = ethers.utils.parseEther("1");
-    const im1 = ethers.utils.parseEther("2");
-    const re2 = ethers.utils.parseEther("1");
-    const im2 = ethers.utils.parseEther("2");
+    const re1 = ethers.utils.parseEther(a.toString());
+    const im1 = ethers.utils.parseEther(b.toString());
+    const re2 = ethers.utils.parseEther(a.toString());
+    const im2 = ethers.utils.parseEther(b.toString());
 
     const result = await complex.add(re1, im1, re2, im2);
 
@@ -50,15 +46,15 @@ describe("Deploy Complex", () => {
   });
 
   it("Should subtract", async () => {
-    const c1 = new Complex(1, 2);
-    const c2 = new Complex(1, 2);
+    const c1 = new Complex(a, b);
+    const c2 = new Complex(a, b);
 
     const result_js = c1.sub(c2);
 
-    const re1 = ethers.utils.parseEther("1");
-    const im1 = ethers.utils.parseEther("2");
-    const re2 = ethers.utils.parseEther("1");
-    const im2 = ethers.utils.parseEther("2");
+    const re1 = ethers.utils.parseEther(a.toString());
+    const im1 = ethers.utils.parseEther(b.toString());
+    const re2 = ethers.utils.parseEther(a.toString());
+    const im2 = ethers.utils.parseEther(b.toString());
 
     const result = await complex.sub(re1, im1, re2, im2);
 
@@ -76,15 +72,15 @@ describe("Deploy Complex", () => {
   });
 
   it("Should multiply", async () => {
-    const c1 = new Complex(1, 2);
-    const c2 = new Complex(1, 2);
+    const c1 = new Complex(a, b);
+    const c2 = new Complex(a, b);
 
     const result_js = c1.mul(c2);
 
-    const re1 = ethers.utils.parseEther("1");
-    const im1 = ethers.utils.parseEther("2");
-    const re2 = ethers.utils.parseEther("1");
-    const im2 = ethers.utils.parseEther("2");
+    const re1 = ethers.utils.parseEther(a.toString());
+    const im1 = ethers.utils.parseEther(b.toString());
+    const re2 = ethers.utils.parseEther(a.toString());
+    const im2 = ethers.utils.parseEther(b.toString());
 
     const result = await complex.mul(re1, im1, re2, im2);
 
@@ -102,15 +98,15 @@ describe("Deploy Complex", () => {
   });
 
   it("Should divide", async () => {
-    const c1 = new Complex(1, 2);
-    const c2 = new Complex(1, 2);
+    const c1 = new Complex(a, b);
+    const c2 = new Complex(a, b);
 
-    const result_js = c1.div(c2);
+    const result_js = c1.mul(c2);
 
-    const re1 = ethers.utils.parseEther("1");
-    const im1 = ethers.utils.parseEther("2");
-    const re2 = ethers.utils.parseEther("1");
-    const im2 = ethers.utils.parseEther("2");
+    const re1 = ethers.utils.parseEther(a.toString());
+    const im1 = ethers.utils.parseEther(b.toString());
+    const re2 = ethers.utils.parseEther(a.toString());
+    const im2 = ethers.utils.parseEther(b.toString());
 
     const result = await complex.div(re1, im1, re2, im2);
 
@@ -128,15 +124,15 @@ describe("Deploy Complex", () => {
   });
 
   it("Should calculate r2", async () => {
-    const c1 = new Complex(1, 2);
+    const c1 = new Complex(a, b);
 
-    const a = c1.re * c1.re;
-    const b = c1.im * c1.im;
+    const a1 = c1.re * c1.re;
+    const b1 = c1.im * c1.im;
 
-    const result_js = sqrt(a + b);
+    const result_js = sqrt(a1 + b1);
 
-    const re1 = ethers.utils.parseEther("1");
-    const im1 = ethers.utils.parseEther("2");
+    const re1 = ethers.utils.parseEther(a.toString());
+    const im1 = ethers.utils.parseEther(b.toString());
 
     const result = await complex.r2(re1, im1);
 
@@ -146,10 +142,10 @@ describe("Deploy Complex", () => {
   });
 
   it("Should calculate non precise atan2", async () => {
-    var result_js = Math.atan2(1, 2);
+    var result_js = Math.atan2(a, b);
 
-    var y = ethers.utils.parseEther("1");
-    var x = ethers.utils.parseEther("2");
+    const y = ethers.utils.parseEther(a.toString());
+    const x = ethers.utils.parseEther(b.toString());
 
     const result = await complex.atan2(y, x);
 
@@ -162,10 +158,10 @@ describe("Deploy Complex", () => {
   });
 
   it("Should calculate precise atan2", async () => {
-    var result_js = Math.atan2(1, 2);
+    var result_js = Math.atan2(a, b);
 
-    var y = ethers.utils.parseEther("1");
-    var x = ethers.utils.parseEther("2");
+    const y = ethers.utils.parseEther(a.toString());
+    const x = ethers.utils.parseEther(b.toString());
 
     const result = await complex.p_atan2(y, x);
 
@@ -195,12 +191,12 @@ describe("Deploy Complex", () => {
   });
 
   it("Should calculate complex ln", async () => {
-    const c = new Complex(1, 2);
+    const c = new Complex(a, b);
 
     const result_js = c.log();
 
-    const re1 = ethers.utils.parseEther("1");
-    const im1 = ethers.utils.parseEther("2");
+    const re1 = ethers.utils.parseEther(a.toString());
+    const im1 = ethers.utils.parseEther(b.toString());
 
     const result = await complex.complexLN(re1, im1);
 
@@ -213,17 +209,17 @@ describe("Deploy Complex", () => {
       "ether"
     );
 
-    expect(result_js.re).to.be.closeTo(parseFloat(re), 0.02);
-    expect(result_js.im).to.be.closeTo(parseFloat(im), 0.02);
+    expect(result_js.re).to.be.closeTo(parseFloat(re), 0.005);
+    expect(result_js.im).to.be.closeTo(parseFloat(im), 0.005);
   });
 
   it("Should calculate complex sqrt", async () => {
-    const c = new Complex(1, 2);
+    const c = new Complex(a, b);
 
     const result_js = c.sqrt();
 
-    const re1 = ethers.utils.parseEther("1");
-    const im1 = ethers.utils.parseEther("2");
+    const re1 = ethers.utils.parseEther(a.toString());
+    const im1 = ethers.utils.parseEther(b.toString());
 
     const result = await complex.complexSQRT(re1, im1);
 
@@ -236,7 +232,55 @@ describe("Deploy Complex", () => {
       "ether"
     );
 
-    expect(result_js.re).to.be.closeTo(parseFloat(re), 0.1);
-    expect(result_js.im).to.be.closeTo(parseFloat(im), 0.1);
+    expect(result_js.re).to.be.closeTo(parseFloat(re), 0.003);
+    expect(result_js.im).to.be.closeTo(parseFloat(im), 0.003);
+  });
+
+  it("Should calculate complex exponential", async () => {
+    const c = new Complex(a, b);
+
+    const result_js = c.exp(Complex.E);
+
+    const re1 = ethers.utils.parseEther(a.toString());
+    const im1 = ethers.utils.parseEther(b.toString());
+
+    const result = await complex.complexEXP(re1, im1);
+
+    const re = ethers.utils.formatUnits(
+      ethers.BigNumber.from(result[0]),
+      "ether"
+    );
+    const im = ethers.utils.formatUnits(
+      ethers.BigNumber.from(result[1]),
+      "ether"
+    );
+
+    expect(result_js.re).to.be.closeTo(parseFloat(re), 0.000001);
+    expect(result_js.im).to.be.closeTo(parseFloat(im), 0.000001);
+  });
+
+  it("Should calculate complex power", async () => {
+    const c = new Complex(a, b);
+
+    const result_js = c.pow(2);
+
+    const re1 = ethers.utils.parseEther(a.toString());
+    const im1 = ethers.utils.parseEther(b.toString());
+
+    const n = ethers.utils.parseEther("2");
+
+    const result = await complex.complexPOW(re1, im1, n);
+
+    const re = ethers.utils.formatUnits(
+      ethers.BigNumber.from(result[0]),
+      "ether"
+    );
+    const im = ethers.utils.formatUnits(
+      ethers.BigNumber.from(result[1]),
+      "ether"
+    );
+
+    expect(result_js.re).to.be.closeTo(parseFloat(re), 0.02);
+    expect(result_js.im).to.be.closeTo(parseFloat(im), 0.02);
   });
 });

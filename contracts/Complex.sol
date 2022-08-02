@@ -2,6 +2,7 @@
 pragma solidity ^0.8.15;
 
 /// @title num_complex_solidity
+/// @dev COMPLEX MATH FUNCTIONS WITH 2 z INPUTS
 /// @author Alexander John Lee
 /// @notice Solidity library offering basic complex number functions where inputs and outputs are
 /// signed integers. 
@@ -14,28 +15,33 @@ import "./Trigonometry.sol";
 contract Complex {
     using PRBMathSD59x18 for int256;
 
-    // init i into struct
+
     struct complex {
         int re;
         int im;
     }
 
-    //complex internal imaginary;
-    //imaginary(0,1e18)
 
-    // @dev COMPLEX MATH FUNCTIONS WITH 2 z INPUTS
-
-    // @dev ADDITION
+    /// @notice ADDITION
+    /// @param re real 1
+    /// @param im imaginary 1
+    /// @param re1 real 2
+    /// @param im1 imaginary 2
+    /// @return returns real and imaginary part
     function add(int re, int im, int re1, int im1) public pure returns (int,int) {
         re += re1;
         im += im1;
 
-
-
         return (re,im);
     }
 
-    // @dev SUBTRACTION
+
+    /// @notice SUBTRACTION
+    /// @param re real 1
+    /// @param im imaginary 1
+    /// @param re1 real 2
+    /// @param im1 imaginary 2
+    /// @return returns real and imaginary part
     function sub(int re, int im, int re1, int im1) public pure returns (int,int) {
         re -= re1;
         im -= im1;
@@ -43,42 +49,65 @@ contract Complex {
         return (re,im);
     }
 
-    // @dev MULTIPLICATION
+
+    /// @notice MULTIPLICATION
+    /// @param re real 1
+    /// @param im imaginary 1
+    /// @param re1 real 2
+    /// @param im1 imaginary 2
+    /// @return returns real and imaginary part
     function mul(int re, int im, int re1, int im1) public pure returns (int,int) {
-        int a = re.mul(re1);
-        int b = im.mul(im1);
-        int c = im.mul(re1);
-        int d = re.mul(im1);
+        int a = re * re1;
+        int b = im * im1;
+        int c = im * re1;
+        int d = re * im1;
 
         re = a-b;
         im = c+d;
 
+        re /= 1e18;
+        im /= 1e18;
+
         return (re,im);
     }
 
-    // @dev DIVISION
+
+    /// @notice DIVISION
+    /// @param re real 1
+    /// @param im imaginary 1
+    /// @param re1 real 2
+    /// @param im1 imaginary 2
+    /// @return returns real and imaginary part
     function div(int re, int im, int re1, int im1) public pure returns (int,int) {
-        int numA = re.mul(re1) + im.mul(im1);
-        int den = re1.pow(2e18) + im1.pow(2e18);
-        int numB = im.mul(re1) - re.mul(im1);
+        int numA = re * re1 + im * im1;
+        int den = re1**2 + im1**2;
+        int numB = im * re1 - re * im1;
         
-        re = numA.div(den);
-        im = numB.div(den);
+        re = (numA * 1e18) / den;
+        im = (numB * 1e18) / den;
 
         return (re,im);
     }
 
-    // @dev CALCULATE HYPOTENUSE (STATUS: WORKING)
-    // r^2 = a^2 + b^2
+
+    /// @notice CALCULATE HYPOTENUSE
+    /// @dev r^2 = a^2 + b^2
+    /// @param a a
+    /// @param b b
+    /// @return returns r
     function r2(int a, int b) public pure returns (int) {
         a = a.mul(a);
         b = b.mul(b);
         return (a+b).sqrt();
     }
 
-    // @dev CONVERT COMPLEX NUMBER TO POLAR COORDINATES (STATUS: WORKING)
-    // @dev WARNING R2 FUNCTION ALWAYS RETURNS POSITIVE VALUES => ELSE{code} IS UNREACHABLE
-    // atan vs atan2
+
+    /// @notice CONVERT COMPLEX NUMBER TO POLAR COORDINATES
+    /// @dev WARNING R2 FUNCTION ALWAYS RETURNS POSITIVE VALUES => ELSE{code} IS UNREACHABLE
+    /// @dev // atan vs atan2
+    /// @param re real part
+    /// @param im imaginary part
+    /// @return returns r,T
     function toPolar(int re, int im) public pure returns (int,int) {
         int r = r2(re,im);
         //int BdivA = re / im;
@@ -94,8 +123,13 @@ contract Complex {
         }  
     }
 
-    // @dev CONVERT FROM POLAR TO COMPLEX (STATUS: WORKING)
-    // https://github.com/rust-num/num-complex/blob/3a89daa2c616154035dd27d706bf7938bcbf30a8/src/lib.rs#L182
+
+    /// @notice CONVERT FROM POLAR TO COMPLEX
+    /// @dev https://github.com/rust-num/num-complex/blob/3a89daa2c616154035dd27d706bf7938bcbf30a8/src/lib.rs#L182
+    /// @param r r
+    /// @param T theta
+    /// @return re real
+    /// @return im imaginary
     function fromPolar(int r, int T) public pure returns (int re,int im) {
         // @dev check if T is negative
         if (T > 0) {
@@ -109,7 +143,11 @@ contract Complex {
         }
     }
 
-    // @dev ATAN2(Y,X) FUNCTION (LESS PRECISE LESS GAS) (STATUS: WORKING)
+
+    /// @notice ATAN2(Y,X) FUNCTION (LESS PRECISE LESS GAS)
+    /// @param y y
+    /// @param x x 
+    /// @return T 
     function atan2(int y, int x) public pure returns (int T) {
         int c1 = 3141592653589793300/4;
         int c2 = 3*c1;
@@ -131,7 +169,11 @@ contract Complex {
         }
     }
 
-    // @dev ATAN2(Y,X) FUNCTION (MORE PRECISE MORE GAS) (STATUS: WORKING)
+
+    /// @notice ATAN2(Y,X) FUNCTION (MORE PRECISE MORE GAS)
+    /// @param y y
+    /// @param x x 
+    /// @return T
     function p_atan2(int y, int x) public pure returns (int T) {
         int c1 = 3141592653589793300/4;
         int c2 = 3*c1;
@@ -139,11 +181,11 @@ contract Complex {
 
         if (x >= 0) {
             int r = (x - abs_y) * 1e18 / (x + abs_y);
-            T = (1963e14 * r.pow(3e18)) / 1e54 - (9817e14 * r) / 1e18 + c1;
+            T = (1963e14 * r**3) / 1e54 - (9817e14 * r) / 1e18 + c1;
         }
         else{
             int r = (x + abs_y) * 1e18 / (abs_y - x);
-            T = (1963e14 * r.mul(3)) / 1e54 - (9817e14 * r) / 1e18 + c2;
+            T = (1963e14 * r**3) / 1e54 - (9817e14 * r) / 1e18 + c2;
         }
         if (y < 0) {
             return -T;
@@ -153,13 +195,21 @@ contract Complex {
         }
     }
 
-    // @dev PRECISE ATAN2(Y,X) FROM range -1 to 1 (STATUS: WORKING)
+
+    /// @notice PRECISE ATAN2(Y,X) FROM range -1 to 1 (MORE PRECISE LESS GAS)
+    /// @param x (y/x)
+    /// @return T
     function atan1to1(int x) public pure returns (int) {
         int y = ((7.85e17 * x) / 1e18) - (((x*(x - 1e18)) / 1e18) * (2.447e17 + ((6.63e16*x)/1e18))) / 1e18;
         return y;
     }
 
-    // @dev COMPLEX NATURAL LOGARITHM (STATUS: WORKING)
+
+    /// @notice COMPLEX NATURAL LOGARITHM
+    /// @param re real
+    /// @param im imaginary
+    /// @return re real
+    /// @return im imaginary
     function complexLN(int re, int im) public pure returns (int,int) {
         int T;
 
@@ -171,7 +221,13 @@ contract Complex {
         return (re,im);
     }
 
-    // @dev COMPLEX SQUARE ROOT (STATUS: if re & im > 0 WORKING) 
+
+    /// @notice COMPLEX SQUARE ROOT
+    /// @dev only works if 0 < re & im
+    /// @param re real
+    /// @param im imaginary
+    /// @return re real
+    /// @return im imaginary
     function complexSQRT(int re, int im) public pure returns (int,int) {
         // if imaginary is 0 
         if (im == 0) {
@@ -215,8 +271,13 @@ contract Complex {
         return (re, im);
     }
 
-    // @dev COMPLEX EXPONENTIAL (STATUS: WORKING)
-    // formula: e^(a + bi) = e^a (cos(b) + i*sin(b))
+
+    /// @notice COMPLEX EXPONENTIAL
+    /// @dev e^(a + bi) = e^a (cos(b) + i*sin(b))
+    /// @param re re
+    /// @param im im
+    /// @return re re
+    /// @return im im
     function complexEXP(int re, int im) public pure returns (int,int) {
         int r = re.exp();
         (re, im) = fromPolar(r,im);
@@ -224,9 +285,15 @@ contract Complex {
         return (re,im);
     }
 
-    // IN PROGRESS!!
-    // @dev COMPLEX POWER USING DEMOIVRE'S FORUMULA (STATUS: NEEDS CHECKING) - hint 1e18 
-    // WARNING MUST ADD CHECKER OF MAX VALS FOR INPUT 
+
+    /// @notice COMPLEX POWER
+    /// @dev using Demoivre's formula
+    /// @dev overflow risk 
+    /// @param re re
+    /// @param im im
+    /// @param n base 1e18
+    /// @return re re
+    /// @return im im
     function complexPOW(int re, int im, int n) public pure returns (int,int) {
        
         (int r, int theta) = toPolar(re,im);
