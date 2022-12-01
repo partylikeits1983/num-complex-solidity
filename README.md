@@ -55,11 +55,13 @@ npx hardhat test tests/math.test.js
 ```
 
 
-## Function Documentation
+## Documentation
 
-## Full Documentation
+### Full Documentation
 
 [num_complex_solidity documentation](docs/index.md)
+
+## Function Documentation
 
 ### complex
 
