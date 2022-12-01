@@ -57,11 +57,8 @@ npx hardhat test tests/math.test.js
 
 ## Documentation
 
-### Full Documentation
-
 [num_complex_solidity documentation](docs/index.md)
 
-## Function Documentation
 
 ### complex
 
