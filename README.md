@@ -7,7 +7,7 @@
 Install via npm:
 
 ```sh
-$ npm i @partylikeits1983/complex_sol
+$ npm i num_complex_solidity
 ```
 
 ```solidity
