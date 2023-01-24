@@ -276,7 +276,6 @@ contract Num_Complex {
     /// @param n base 1e18
     /// @return Complex number
     function pow(Complex memory a, int n) public pure returns (Complex memory) {
-       
         (int r, int theta) = toPolar(a);
 
         // gas savings
