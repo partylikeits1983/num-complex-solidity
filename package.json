@@ -1,10 +1,11 @@
 {
   "name": "num_complex_solidity",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "ComplexNumbersSolidity",
   "main": "hardhat.config.js",
   "directories": {
-    "test": "tests"
+    "doc": "docs",
+    "test": "test"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,6 +22,7 @@
   "homepage": "https://github.com/partylikeits1983/num_complex_solidity#readme",
   "dependencies": {
     "@chainlink/contracts": "^0.4.1",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.7",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@openzeppelin/contracts": "^4.7.0",
     "@prb/math": "^2.5.0",
@@ -35,11 +37,13 @@
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.1.0",
+    "@types/mocha": "^10.0.1",
     "chai": "^4.3.6",
     "ethereum-waffle": "^3.4.4",
     "ethers": "^5.5.4",
     "hardhat-deploy": "^0.11.11",
     "hardhat-gas-reporter": "^1.0.8",
-    "mocha": "^10.0.0"
+    "mocha": "^10.0.0",
+    "ts-node": "^10.9.1"
   }
 }
