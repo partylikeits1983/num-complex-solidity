@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.15;
+pragma solidity ^0.8.17;
 
 /// @title num_complex_solidity
 /// @dev COMPLEX MATH FUNCTIONS WITH 2 z INPUTS
@@ -12,85 +12,77 @@ pragma solidity ^0.8.15;
 import "contracts/dependencies/prb-math/PRBMathSD59x18.sol";
 import "./Trigonometry.sol";
 
-contract Complex {
+contract Num_Complex {
     using PRBMathSD59x18 for int256;
 
 
-    struct complex {
+    /// @notice Complex Type
+    struct Complex {
         int re;
         int im;
     }
 
+    /// @notice Complex Type Wrapper
+    /// @param re real part
+    /// @param im imaginary part
+    /// @return Complex type
+    function complex(int re, int im) public pure returns (Complex memory) {
+        return Complex(re, im);
+    }
+
 
     /// @notice ADDITION
-    /// @param re real 1
-    /// @param im imaginary 1
-    /// @param re1 real 2
-    /// @param im1 imaginary 2
-    /// @return re real
-    /// @return im imaginary
-    function add(int re, int im, int re1, int im1) public pure returns (int,int) {
-        re += re1;
-        im += im1;
+    /// @param a Complex number
+    /// @param b Complex number
+    /// @return a real
+    function add(Complex memory a, Complex memory b) public pure returns (Complex memory) {
+        a.re += b.re;
+        a.im += b.im;
 
-        return (re,im);
+        return a;
     }
 
 
     /// @notice SUBTRACTION
-    /// @param re real 1
-    /// @param im imaginary 1
-    /// @param re1 real 2
-    /// @param im1 imaginary 2
-    /// @return re real
-    /// @return im imaginary
-    function sub(int re, int im, int re1, int im1) public pure returns (int,int) {
-        re -= re1;
-        im -= im1;
+    /// @param a Complex number
+    /// @param b Complex number
+    /// @return a real
+    function sub(Complex memory a, Complex memory b) public pure returns (Complex memory) {
+        a.re -= b.re;
+        a.im -= b.im;
 
-        return (re,im);
+        return a;
     }
 
 
     /// @notice MULTIPLICATION
-    /// @param re real 1
-    /// @param im imaginary 1
-    /// @param re1 real 2
-    /// @param im1 imaginary 2
-    /// @return re real
-    /// @return im imaginary
-    function mul(int re, int im, int re1, int im1) public pure returns (int,int) {
-        int a = re * re1;
-        int b = im * im1;
-        int c = im * re1;
-        int d = re * im1;
 
-        re = a-b;
-        im = c+d;
+    function mul(Complex memory a, Complex memory b) public pure returns (Complex memory) {
+        int _a = a.re * b.re;
+        int _b = a.im * b.im;
+        int _c = a.im * b.re;
+        int _d = a.re * b.im;
 
-        re /= 1e18;
-        im /= 1e18;
+        a.re = _a - _b;
+        a.im = _c + _d;
 
-        return (re,im);
+        a.re /= 1e18;
+        a.im /= 1e18;
+
+        return a;
     }
 
 
     /// @notice DIVISION
-    /// @param re real 1
-    /// @param im imaginary 1
-    /// @param re1 real 2
-    /// @param im1 imaginary 2
-    /// @return re real
-    /// @return im imaginary
-    function div(int re, int im, int re1, int im1) public pure returns (int,int) {
-        int numA = re * re1 + im * im1;
-        int den = re1**2 + im1**2;
-        int numB = im * re1 - re * im1;
+    function div(Complex memory a, Complex memory b) public pure returns (Complex memory) {
+        int numA = a.re * b.re + a.im * b.im;
+        int den = b.re**2 + b.im**2;
+        int numB = a.im * b.re - a.re * b.im;
         
-        re = (numA * 1e18) / den;
-        im = (numB * 1e18) / den;
+        a.re = (numA * 1e18) / den;
+        b.im = (numB * 1e18) / den;
 
-        return (re,im);
+        return a;
     }
 
 
@@ -102,30 +94,27 @@ contract Complex {
     function r2(int a, int b) public pure returns (int) {
         a = a.mul(a);
         b = b.mul(b);
-        return (a+b).sqrt();
+        return (a + b).sqrt();
     }
 
 
     /// @notice CONVERT COMPLEX NUMBER TO POLAR COORDINATES
     /// @dev WARNING R2 FUNCTION ALWAYS RETURNS POSITIVE VALUES => ELSE{code} IS UNREACHABLE
     /// @dev // atan vs atan2
-    /// @param re real part
-    /// @param im imaginary part
     /// @return r r
     /// @return T theta
-    function toPolar(int re, int im) public pure returns (int,int) {
-        int r = r2(re,im);
+    function toPolar(Complex memory a) public pure returns (int, int) {
+        int r = r2(a.re, a.im);
         //int BdivA = re / im;
         if (r > 0) {
             // im/re or re/im ??
-            int T = p_atan2(im,re);
+            int T = p_atan2(a.im, a.re);
+            return (r,T);
+        } else {
+            // !!! if r is negative !!!
+            int T = p_atan2(a.im, a.re) + 180e18;
             return (r,T);
         }
-        else {
-            // !!! if r is negative !!!
-            int T = p_atan2(im,re) + 180e18;
-            return (r,T);
-        }  
     }
 
 
@@ -133,18 +122,15 @@ contract Complex {
     /// @dev https://github.com/rust-num/num-complex/blob/3a89daa2c616154035dd27d706bf7938bcbf30a8/src/lib.rs#L182
     /// @param r r
     /// @param T theta
-    /// @return re real
-    /// @return im imaginary
-    function fromPolar(int r, int T) public pure returns (int re,int im) {
+    /// @return a Complex number
+    function fromPolar(int r, int T) public pure returns (Complex memory a) {
         // @dev check if T is negative
         if (T > 0) {
-            re = (r * Trigonometry.cos(uint(T))) / 1e18;
-            im = (r * Trigonometry.sin(uint(T))) / 1e18;
-        }
-        else {
-            re = (r * Trigonometry.cos(uint(T))) / 1e18;
-            // this specific line was a nightmare lol all good now though
-            im = -(r * Trigonometry.sin(uint(T * -1))) / 1e18;
+            a.re = (r * Trigonometry.cos(uint(T))) / 1e18;
+            a.im = (r * Trigonometry.sin(uint(T))) / 1e18;
+        } else {
+            a.re = (r * Trigonometry.cos(uint(T))) / 1e18;
+            a.im = -(r * Trigonometry.sin(uint(T * -1))) / 1e18;
         }
     }
 
@@ -161,15 +147,13 @@ contract Complex {
         if (x >= 0) {
             int r = (x - abs_y) * 1e18 / (x + abs_y);
             T = (c1 * 1e18 - c1 * r) / 1e18;
-        } 
-        else {
+        } else {
             int r = (x + abs_y) * 1e18 / (abs_y - x);
             T = (c2 * 1e18 - c1 * r) / 1e18;
         }
         if (y < 0) {
             return -T;
-        }
-        else {
+        } else {
             return T;
         }
     }
@@ -187,15 +171,13 @@ contract Complex {
         if (x >= 0) {
             int r = (x - abs_y) * 1e18 / (x + abs_y);
             T = (1963e14 * r**3) / 1e54 - (9817e14 * r) / 1e18 + c1;
-        }
-        else{
+        } else{
             int r = (x + abs_y) * 1e18 / (abs_y - x);
             T = (1963e14 * r**3) / 1e54 - (9817e14 * r) / 1e18 + c2;
         }
         if (y < 0) {
             return -T;
-        }
-        else {
+        } else {
             return T;
         }
     }
@@ -205,111 +187,98 @@ contract Complex {
     /// @param x (y/x)
     /// @return T T
     function atan1to1(int x) public pure returns (int) {
-        int y = ((7.85e17 * x) / 1e18) - (((x*(x - 1e18)) / 1e18) * (2.447e17 + ((6.63e16*x)/1e18))) / 1e18;
+        int y = ((7.85e17 * x) / 1e18) - (((x* (x - 1e18)) / 1e18) * (2.447e17 + ((6.63e16 * x)/1e18))) / 1e18;
         return y;
     }
 
 
     /// @notice COMPLEX NATURAL LOGARITHM
-    /// @param re real
-    /// @param im imaginary
-    /// @return re real
-    /// @return im imaginary
-    function complexLN(int re, int im) public pure returns (int,int) {
-        int T;
+    function complexln(Complex memory a) public pure returns (Complex memory) {
+        // int T;
 
-        (re, T) = toPolar(re,im);
+        (a.re, a.im) = toPolar(a);
 
-        re = re.ln();
-        im = T;
+        a.re = a.re.ln();
 
-        return (re,im);
+        return a;
     }
 
 
     /// @notice COMPLEX SQUARE ROOT
     /// @dev only works if 0 < re & im
-    /// @param re real
-    /// @param im imaginary
-    /// @return re real
-    /// @return im imaginary
-    function complexSQRT(int re, int im) public pure returns (int,int) {
+    function complexSQRT(Complex memory a) public pure returns (Complex memory) {
         // if imaginary is 0 
-        if (im == 0) {
+        if (a.im == 0) {
             // if real is positive
-            if (re > 0) {
+            if (a.re > 0) {
                 // simple positive real √r, and copy `im` for its sign
-                re = re.sqrt();
+                a.re = a.re.sqrt();
             }
             // if real is negative
             else {
                 // √(r e^(iπ)) = √r e^(iπ/2) = i√r
                 // √(r e^(-iπ)) = √r e^(-iπ/2) = -i√r
                 // if real is negative
-                im = -re.sqrt();
+                a.im = -a.re.sqrt();
                 // if imaginary is positive
-                if (im > 0) {
-                    re = 0;
+                if (a.im > 0) {
+                    a.re = 0;
                 }
                 else {
                     // if imaginary is negative
-                    im = -im;
+                    a.im = -a.im;
                 }
             }
         }
-        else if (re == 0) {
+        else if (a.re == 0) {
             // √(r e^(iπ/2)) = √r e^(iπ/4) = √(r/2) + i√(r/2)
             // √(r e^(-iπ/2)) = √r e^(-iπ/4) = √(r/2) - i√(r/2
-            re = (im.abs() / 2).sqrt();
-            if (re > 0) {
-                im = re;
+            a.re = (a.im.abs() / 2).sqrt();
+            if (a.re > 0) {
+                a.im = a.re;
             }
             else {
-                im = -re;
+                a.im = -a.re;
             }
         }
         else {
             // formula: sqrt(r e^(it)) = sqrt(r) e^(it/2)
-            (int r, int T) = toPolar(re,im);
-            (re,im) = fromPolar(r.sqrt(), T/2);
+            (int r, int T) = toPolar(a);
+            a = fromPolar(r.sqrt(), T/2);
         }
-        return (re, im);
+        return a;
     }
 
 
     /// @notice COMPLEX EXPONENTIAL
     /// @dev e^(a + bi) = e^a (cos(b) + i*sin(b))
-    /// @param re re
-    /// @param im im
-    /// @return re re
-    /// @return im im
-    function complexEXP(int re, int im) public pure returns (int,int) {
-        int r = re.exp();
-        (re, im) = fromPolar(r,im);
+    /// @param a Complex number
+    /// @return a Complex number
+    function complexEXP(Complex memory a) public pure returns (Complex memory) {
+        int r = a.re.exp();
+        a = fromPolar(r, a.im);
 
-        return (re,im);
+        return a;
     }
 
 
     /// @notice COMPLEX POWER
     /// @dev using Demoivre's formula
     /// @dev overflow risk 
-    /// @param re re
-    /// @param im im
+    /// @param a Complex number
     /// @param n base 1e18
-    /// @return re re
-    /// @return im im
-    function complexPOW(int re, int im, int n) public pure returns (int,int) {
+    /// @return Complex number
+    function complexPOW(Complex memory a, int n) public pure returns (Complex memory) {
        
-        (int r, int theta) = toPolar(re,im);
+        (int r, int theta) = toPolar(a);
 
         // gas savings
         int rTOn = r.pow(n);
         int nTheta = n * theta / 1e18;
 
-        re = rTOn * Trigonometry.cos(uint(nTheta)) / 1e18;
-        im = rTOn * Trigonometry.sin(uint(nTheta)) / 1e18;
+        a.re = rTOn * Trigonometry.cos(uint(nTheta)) / 1e18;
+        a.im = rTOn * Trigonometry.sin(uint(nTheta)) / 1e18;
 
-        return (re,im);
+        return a;
     }
 }

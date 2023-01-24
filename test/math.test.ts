@@ -10,15 +10,16 @@ import { sqrt } from "mathjs";
 describe("Complex Number Library", () => {
 
   async function initialize() {
-    const Complex = await ethers.getContractFactory("Complex");
+    const Complex = await ethers.getContractFactory("Num_Complex");
     const complex = await Complex.deploy();
 
     const a = -1;
     const b = 2;
 
-    return { complex, a, b};
+    const real = ethers.utils.parseEther(a.toString());
+    const imag = ethers.utils.parseEther(b.toString());
 
-
+    return { complex, a, b, real, imag};
   }
 
   describe("Complex Tests", function () {
@@ -28,26 +29,24 @@ describe("Complex Number Library", () => {
     });
  */
     it("Should add", async () => {
-      const { complex, a, b } = await loadFixture(initialize);
+      const { complex, a, b, real, imag } = await loadFixture(initialize);
 
       const c1 = new Complex(a, b);
       const c2 = new Complex(a, b);
 
       const result_js = c1.add(c2);
 
-      const re1 = ethers.utils.parseEther(a.toString());
-      const im1 = ethers.utils.parseEther(b.toString());
-      const re2 = ethers.utils.parseEther(a.toString());
-      const im2 = ethers.utils.parseEther(b.toString());
+      const a1 = await complex.complex(real, imag);
+      const b1 = await complex.complex(real, imag)
 
-      const result = await complex.add(re1, im1, re2, im2);
+      const result_sol = await complex.add(a1, b1);
 
       const re = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[0]),
+        ethers.BigNumber.from(result_sol[0]),
         "ether"
       ));
       const im = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[1]),
+        ethers.BigNumber.from(result_sol[1]),
         "ether"
       ));
 
@@ -56,26 +55,24 @@ describe("Complex Number Library", () => {
     });
 
     it("Should subtract", async () => {
-      const { complex, a, b } = await loadFixture(initialize);
+      const { complex, a, b, real, imag } = await loadFixture(initialize);
 
       const c1 = new Complex(a, b);
       const c2 = new Complex(a, b);
 
       const result_js = c1.sub(c2);
 
-      const re1 = ethers.utils.parseEther(a.toString());
-      const im1 = ethers.utils.parseEther(b.toString());
-      const re2 = ethers.utils.parseEther(a.toString());
-      const im2 = ethers.utils.parseEther(b.toString());
+      const a1 = await complex.complex(real, imag);
+      const b1 = await complex.complex(real, imag)
 
-      const result = await complex.sub(re1, im1, re2, im2);
+      const result_sol = await complex.sub(a1, b1);
 
       const re = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[0]),
+        ethers.BigNumber.from(result_sol[0]),
         "ether"
       ));
       const im = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[1]),
+        ethers.BigNumber.from(result_sol[1]),
         "ether"
       ));
 
@@ -84,26 +81,24 @@ describe("Complex Number Library", () => {
     });
 
   it("Should multiply", async () => {
-      const { complex, a, b } = await loadFixture(initialize);
+    const { complex, a, b, real, imag } = await loadFixture(initialize);
 
       const c1 = new Complex(a, b);
       const c2 = new Complex(a, b);
 
       const result_js = c1.mul(c2);
 
-      const re1 = ethers.utils.parseEther(a.toString());
-      const im1 = ethers.utils.parseEther(b.toString());
-      const re2 = ethers.utils.parseEther(a.toString());
-      const im2 = ethers.utils.parseEther(b.toString());
+      const a1 = await complex.complex(real, imag);
+      const b1 = await complex.complex(real, imag)
 
-      const result = await complex.mul(re1, im1, re2, im2);
+      const result_sol = await complex.mul(a1, b1);
 
       const re = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[0]),
+        ethers.BigNumber.from(result_sol[0]),
         "ether"
       ));
       const im = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[1]),
+        ethers.BigNumber.from(result_sol[1]),
         "ether"
       ));
 
@@ -112,19 +107,17 @@ describe("Complex Number Library", () => {
     });
 
     it("Should divide", async () => {
-      const { complex, a, b } = await loadFixture(initialize);
+      const { complex, a, b, real, imag } = await loadFixture(initialize);
 
       const c1 = new Complex(a, b);
       const c2 = new Complex(a, b);
 
       const result_js = c1.mul(c2);
 
-      const re1 = ethers.utils.parseEther(a.toString());
-      const im1 = ethers.utils.parseEther(b.toString());
-      const re2 = ethers.utils.parseEther(a.toString());
-      const im2 = ethers.utils.parseEther(b.toString());
+      const a1 = await complex.complex(real, imag);
+      const b1 = await complex.complex(real, imag)
 
-      const result = await complex.div(re1, im1, re2, im2);
+      const result = await complex.div(a1, b1);
 
       const re = Number(ethers.utils.formatUnits(
         ethers.BigNumber.from(result[0]),
@@ -215,23 +208,23 @@ describe("Complex Number Library", () => {
     });
 
     it("Should calculate complex ln", async () => {
-      const { complex, a, b } = await loadFixture(initialize);
+      const { complex, a, b, real, imag } = await loadFixture(initialize);
 
       const c = new Complex(a, b);
 
       const result_js = c.log();
 
-      const re1 = ethers.utils.parseEther(a.toString());
-      const im1 = ethers.utils.parseEther(b.toString());
+      const a1 = await complex.complex(real, imag);
 
-      const result = await complex.complexLN(re1, im1);
+      const result_sol = await complex.complexln(a1);
+
 
       const re = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[0]),
+        ethers.BigNumber.from(result_sol[0]),
         "ether"
       ));
       const im = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[1]),
+        ethers.BigNumber.from(result_sol[1]),
         "ether"
       ));
 
@@ -240,23 +233,22 @@ describe("Complex Number Library", () => {
     });
 
     it("Should calculate complex sqrt", async () => {
-      const { complex, a, b } = await loadFixture(initialize);
+      const { complex, a, b, real, imag } = await loadFixture(initialize);
 
       const c = new Complex(a, b);
 
       const result_js = c.sqrt();
 
-      const re1 = ethers.utils.parseEther(a.toString());
-      const im1 = ethers.utils.parseEther(b.toString());
+      const a1 = await complex.complex(real, imag);
 
-      const result = await complex.complexSQRT(re1, im1);
+      const result_sol = await complex.complexSQRT(a1);
 
       const re = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[0]),
+        ethers.BigNumber.from(result_sol[0]),
         "ether"
       ));
       const im = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[1]),
+        ethers.BigNumber.from(result_sol[1]),
         "ether"
       ));
 
@@ -265,23 +257,22 @@ describe("Complex Number Library", () => {
     });
 
     it("Should calculate complex exponential", async () => {
-      const { complex, a, b } = await loadFixture(initialize);
+      const { complex, a, b, real, imag } = await loadFixture(initialize);
 
       const c = new Complex(a, b);
 
       const result_js = c.exp();
 
-      const re1 = ethers.utils.parseEther(a.toString());
-      const im1 = ethers.utils.parseEther(b.toString());
+      const a1 = await complex.complex(real, imag);
 
-      const result = await complex.complexEXP(re1, im1);
+      const result_sol = await complex.complexEXP(a1);
 
       const re = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[0]),
+        ethers.BigNumber.from(result_sol[0]),
         "ether"
       ));
       const im = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[1]),
+        ethers.BigNumber.from(result_sol[1]),
         "ether"
       ));
 
@@ -290,25 +281,24 @@ describe("Complex Number Library", () => {
     });
 
     it("Should calculate complex power", async () => {
-      const { complex, a, b } = await loadFixture(initialize);
+      const { complex, a, b, real, imag } = await loadFixture(initialize);
 
       const c = new Complex(a, b);
 
       const result_js = c.pow(2);
 
-      const re1 = ethers.utils.parseEther(a.toString());
-      const im1 = ethers.utils.parseEther(b.toString());
+      const a1 = await complex.complex(real, imag);
 
       const n = ethers.utils.parseEther("2");
 
-      const result = await complex.complexPOW(re1, im1, n);
+      const result_sol = await complex.complexPOW(a1, n);
 
       const re = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[0]),
+        ethers.BigNumber.from(result_sol[0]),
         "ether"
       ));
       const im = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[1]),
+        ethers.BigNumber.from(result_sol[1]),
         "ether"
       ));
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.15;
+pragma solidity ^0.8.17;
 
 /**
  * @notice Solidity library offering basic trigonometry functions where inputs and outputs are
