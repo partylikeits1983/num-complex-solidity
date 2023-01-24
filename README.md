@@ -2,30 +2,32 @@
 
 `Complex` numbers for Solidity.
 
-This library is in development. Please feel free to make a pull request with added functionality.
-
 # Usage
 
-WIth npm:
+Install via npm:
 
-```bash
+```sh
 $ npm i @partylikeits1983/complex_sol
 ```
 
 ```solidity
-// SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.12;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
 
-import "@partylikeits1983/complex_sol/contracts/Complex.sol";
+import "@partylikeits1983/complex_sol/contracts/Num_Complex.sol";
 
 contract model {
+    Num_Complex Complex;
 
-    function test(int re, int im) public returns (int,int) {
+    Num_Complex.Complex a = Complex.wrap(0, 1e18);
 
-        (re,im) = Complex.complexLN(re,im);
+    function test() public returns (Num_Complex.Complex memory) {
 
-        return (re,im);
+        Num_Complex.Complex memory result = Complex.ln(a);
+
+        return result;
     }
+}
 
 ```
 
@@ -43,16 +45,9 @@ Version 1.0
 | atan2       | tan^-1              | 2632           |
 | p_atan2     | precise tan^-1      | 3442           |
 | atan1to1    | tan^-1 from -1 to 1 | 2496           |
-| complexSQRT | (a+bi)^(1/2)        | 8812           |
-| complexPOW  | when n<1 (a+bi)^n   | 18182          |
-| complexEXP  | e^(a+bi)            | 4986           |
-
-
-## Testing
-
-```sh
-npx hardhat test tests/math.test.js
-```
+| sqrt        | (a+bi)^(1/2)        | 8812           |
+| poq         | when n<1 (a+bi)^n   | 18182          |
+| exp         | e^(a+bi)            | 4986           |
 
 
 ## Documentation
@@ -60,22 +55,31 @@ npx hardhat test tests/math.test.js
 [num_complex_solidity documentation](docs/index.md)
 
 
-## Acknowledgements
+
+
+## Testing
+
+```sh
+npx hardhat test tests/math.test.ts
+```
+
+
+### Acknowledgements
 
 Big thanks to the authors of the the - [mds1/solidity-trigonometry](https://github.com/mds1/solidity-trigonometry) and the [prb-math](https://github.com/paulrberg/prb-math) repositories
 
-## Sponsor this Repository
+### Sponsor this Repository
 
 If you would like to support this repository please feel free to make a contribution to this address:
 0x74d6E0f5bff59A2a6b3CDe43c26EcAaC31101722
 
 All proceeds will go to the development of this repository. Any contribution is greatly appreciated.
 
-## Sponsors
+### Sponsors
 
 [Paul Berg](https://github.com/paulrberg)
 
-## License
+### License
 
 Licensed under either of
 

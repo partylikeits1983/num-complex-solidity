@@ -6,7 +6,7 @@ describe("Deploy Complex", () => {
   it("Should complex library: ", async () => {
     signers = await ethers.getSigners();
 
-    const Complex = await ethers.getContractFactory("Complex");
+    const Complex = await ethers.getContractFactory("Num_Complex");
     const complex = await Complex.deploy();
     await complex.deployed();
     console.log("complex library:", complex.address);

@@ -34,8 +34,8 @@ describe("Complex Number Library", () => {
 
       const result_js = c1.add(c2);
 
-      const a1 = await complex.complex(real, imag);
-      const b1 = await complex.complex(real, imag)
+      const a1 = await complex.wrap(real, imag);
+      const b1 = await complex.wrap(real, imag)
 
       const result_sol = await complex.add(a1, b1);
 
@@ -60,8 +60,8 @@ describe("Complex Number Library", () => {
 
       const result_js = c1.sub(c2);
 
-      const a1 = await complex.complex(real, imag);
-      const b1 = await complex.complex(real, imag)
+      const a1 = await complex.wrap(real, imag);
+      const b1 = await complex.wrap(real, imag)
 
       const result_sol = await complex.sub(a1, b1);
 
@@ -86,8 +86,8 @@ describe("Complex Number Library", () => {
 
       const result_js = c1.mul(c2);
 
-      const a1 = await complex.complex(real, imag);
-      const b1 = await complex.complex(real, imag)
+      const a1 = await complex.wrap(real, imag);
+      const b1 = await complex.wrap(real, imag)
 
       const result_sol = await complex.mul(a1, b1);
 
@@ -112,8 +112,8 @@ describe("Complex Number Library", () => {
 
       const result_js = c1.mul(c2);
 
-      const a1 = await complex.complex(real, imag);
-      const b1 = await complex.complex(real, imag)
+      const a1 = await complex.wrap(real, imag);
+      const b1 = await complex.wrap(real, imag)
 
       const result = await complex.div(a1, b1);
 
@@ -212,9 +212,9 @@ describe("Complex Number Library", () => {
 
       const result_js = c.log();
 
-      const a1 = await complex.complex(real, imag);
+      const a1 = await complex.wrap(real, imag);
 
-      const result_sol = await complex.complexln(a1);
+      const result_sol = await complex.ln(a1);
 
 
       const re = Number(ethers.utils.formatUnits(
@@ -237,9 +237,9 @@ describe("Complex Number Library", () => {
 
       const result_js = c.sqrt();
 
-      const a1 = await complex.complex(real, imag);
+      const a1 = await complex.wrap(real, imag);
 
-      const result_sol = await complex.complexSQRT(a1);
+      const result_sol = await complex.sqrt(a1);
 
       const re = Number(ethers.utils.formatUnits(
         ethers.BigNumber.from(result_sol[0]),
@@ -261,9 +261,9 @@ describe("Complex Number Library", () => {
 
       const result_js = c.exp();
 
-      const a1 = await complex.complex(real, imag);
+      const a1 = await complex.wrap(real, imag);
 
-      const result_sol = await complex.complexEXP(a1);
+      const result_sol = await complex.exp(a1);
 
       const re = Number(ethers.utils.formatUnits(
         ethers.BigNumber.from(result_sol[0]),
@@ -285,11 +285,11 @@ describe("Complex Number Library", () => {
 
       const result_js = c.pow(2);
 
-      const a1 = await complex.complex(real, imag);
+      const a1 = await complex.wrap(real, imag);
 
       const n = ethers.utils.parseEther("2");
 
-      const result_sol = await complex.complexPOW(a1, n);
+      const result_sol = await complex.pow(a1, n);
 
       const re = Number(ethers.utils.formatUnits(
         ethers.BigNumber.from(result_sol[0]),
@@ -303,6 +303,6 @@ describe("Complex Number Library", () => {
       expect(result_js.re).to.be.closeTo(re, 0.02);
       expect(result_js.im).to.be.closeTo(im, 0.02);
     });
-
   });
+  
 });

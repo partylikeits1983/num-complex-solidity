@@ -21,12 +21,20 @@ contract Num_Complex {
     }
 
 
-    /// @notice Complex Type Wrapper
+    /// @notice Complex Type Wrap
     /// @param re real part
     /// @param im imaginary part
     /// @return Complex type
-    function complex(int re, int im) public pure returns (Complex memory) {
+    function wrap(int re, int im) public pure returns (Complex memory) {
         return Complex(re, im);
+    }
+
+
+    /// @notice Complex Type Unwrap
+    /// @param a Complex Number
+    /// @return real imaginary
+    function unwrap(Complex memory a) public pure returns (int, int) {
+        return (a.re, a.im);
     }
 
 
