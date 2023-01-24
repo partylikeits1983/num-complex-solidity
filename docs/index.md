@@ -1,95 +1,120 @@
 # Solidity API
 
-## Complex
+## Num_Complex
 
-### complex
+### Complex
 
 ```solidity
-struct complex {
+struct Complex {
   int256 re;
   int256 im;
 }
 ```
 
+### complex
+
+```solidity
+function complex(int256 re, int256 im) public pure returns (struct Num_Complex.Complex)
+```
+
+Complex Type Wrapper
+
+#### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| re | int256 | real part |
+| im | int256 | imaginary part |
+
+#### Return Values
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | struct Num_Complex.Complex | Complex type |
+
 ### add
 
 ```solidity
-function add(int256 re, int256 im, int256 re1, int256 im1) public pure returns (int256, int256)
+function add(struct Num_Complex.Complex a, struct Num_Complex.Complex b) public pure returns (struct Num_Complex.Complex)
 ```
 
 ADDITION
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| re | int256 | real 1 |
-| im | int256 | imaginary 1 |
-| re1 | int256 | real 2 |
-| im1 | int256 | imaginary 2 |
+#### Parameters
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| [0] | int256 | re real |
-| [1] | int256 | im imaginary |
+| a | struct Num_Complex.Complex | Complex Number |
+| b | struct Num_Complex.Complex | Complex Number |
+
+#### Return Values
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | struct Num_Complex.Complex | Complex Number |
 
 ### sub
 
 ```solidity
-function sub(int256 re, int256 im, int256 re1, int256 im1) public pure returns (int256, int256)
+function sub(struct Num_Complex.Complex a, struct Num_Complex.Complex b) public pure returns (struct Num_Complex.Complex)
 ```
 
 SUBTRACTION
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| re | int256 | real 1 |
-| im | int256 | imaginary 1 |
-| re1 | int256 | real 2 |
-| im1 | int256 | imaginary 2 |
+#### Parameters
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| [0] | int256 | re real |
-| [1] | int256 | im imaginary |
+| a | struct Num_Complex.Complex | Complex number |
+| b | struct Num_Complex.Complex | Complex number |
+
+#### Return Values
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | struct Num_Complex.Complex | Complex Number |
 
 ### mul
 
 ```solidity
-function mul(int256 re, int256 im, int256 re1, int256 im1) public pure returns (int256, int256)
+function mul(struct Num_Complex.Complex a, struct Num_Complex.Complex b) public pure returns (struct Num_Complex.Complex)
 ```
 
 MULTIPLICATION
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| re | int256 | real 1 |
-| im | int256 | imaginary 1 |
-| re1 | int256 | real 2 |
-| im1 | int256 | imaginary 2 |
+#### Parameters
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| [0] | int256 | re real |
-| [1] | int256 | im imaginary |
+| a | struct Num_Complex.Complex | Complex number |
+| b | struct Num_Complex.Complex | Complex number |
+
+#### Return Values
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | struct Num_Complex.Complex | Complex Number |
 
 ### div
 
 ```solidity
-function div(int256 re, int256 im, int256 re1, int256 im1) public pure returns (int256, int256)
+function div(struct Num_Complex.Complex a, struct Num_Complex.Complex b) public pure returns (struct Num_Complex.Complex)
 ```
 
 DIVISION
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| re | int256 | real 1 |
-| im | int256 | imaginary 1 |
-| re1 | int256 | real 2 |
-| im1 | int256 | imaginary 2 |
+#### Parameters
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| [0] | int256 | re real |
-| [1] | int256 | im imaginary |
+| a | struct Num_Complex.Complex | Complex number |
+| b | struct Num_Complex.Complex | Complex number |
+
+#### Return Values
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | struct Num_Complex.Complex | Complex Number |
 
 ### r2
 
@@ -101,10 +126,14 @@ CALCULATE HYPOTENUSE
 
 _r^2 = a^2 + b^2_
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | a | int256 | a |
 | b | int256 | b |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -113,7 +142,7 @@ _r^2 = a^2 + b^2_
 ### toPolar
 
 ```solidity
-function toPolar(int256 re, int256 im) public pure returns (int256, int256)
+function toPolar(struct Num_Complex.Complex a) public pure returns (int256, int256)
 ```
 
 CONVERT COMPLEX NUMBER TO POLAR COORDINATES
@@ -121,10 +150,7 @@ CONVERT COMPLEX NUMBER TO POLAR COORDINATES
 _WARNING R2 FUNCTION ALWAYS RETURNS POSITIVE VALUES => ELSE{code} IS UNREACHABLE
 // atan vs atan2_
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| re | int256 | real part |
-| im | int256 | imaginary part |
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -134,22 +160,25 @@ _WARNING R2 FUNCTION ALWAYS RETURNS POSITIVE VALUES => ELSE{code} IS UNREACHABLE
 ### fromPolar
 
 ```solidity
-function fromPolar(int256 r, int256 T) public pure returns (int256 re, int256 im)
+function fromPolar(int256 r, int256 T) public pure returns (struct Num_Complex.Complex a)
 ```
 
 CONVERT FROM POLAR TO COMPLEX
 
 _https://github.com/rust-num/num-complex/blob/3a89daa2c616154035dd27d706bf7938bcbf30a8/src/lib.rs#L182_
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | r | int256 | r |
 | T | int256 | theta |
 
+#### Return Values
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| re | int256 | real |
-| im | int256 | imaginary |
+| a | struct Num_Complex.Complex | Complex number |
 
 ### atan2
 
@@ -159,10 +188,14 @@ function atan2(int256 y, int256 x) public pure returns (int256 T)
 
 ATAN2(Y,X) FUNCTION (LESS PRECISE LESS GAS)
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | y | int256 | y |
 | x | int256 | x |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -176,10 +209,14 @@ function p_atan2(int256 y, int256 x) public pure returns (int256 T)
 
 ATAN2(Y,X) FUNCTION (MORE PRECISE MORE GAS)
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | y | int256 | y |
 | x | int256 | x |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -193,76 +230,86 @@ function atan1to1(int256 x) public pure returns (int256)
 
 PRECISE ATAN2(Y,X) FROM range -1 to 1 (MORE PRECISE LESS GAS)
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | (y/x) |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | [0] | int256 | T T |
 
-### complexLN
+### ln
 
 ```solidity
-function complexLN(int256 re, int256 im) public pure returns (int256, int256)
+function ln(struct Num_Complex.Complex a) public pure returns (struct Num_Complex.Complex)
 ```
 
 COMPLEX NATURAL LOGARITHM
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| re | int256 | real |
-| im | int256 | imaginary |
+#### Parameters
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| [0] | int256 | re real |
-| [1] | int256 | im imaginary |
+| a | struct Num_Complex.Complex | Complex number |
 
-### complexSQRT
+#### Return Values
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | struct Num_Complex.Complex | Complex Number |
+
+### sqrt
 
 ```solidity
-function complexSQRT(int256 re, int256 im) public pure returns (int256, int256)
+function sqrt(struct Num_Complex.Complex a) public pure returns (struct Num_Complex.Complex)
 ```
 
 COMPLEX SQUARE ROOT
 
 _only works if 0 < re & im_
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| re | int256 | real |
-| im | int256 | imaginary |
+#### Parameters
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| [0] | int256 | re real |
-| [1] | int256 | im imaginary |
+| a | struct Num_Complex.Complex | Complex number |
 
-### complexEXP
+#### Return Values
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | struct Num_Complex.Complex | Complex Number |
+
+### exp
 
 ```solidity
-function complexEXP(int256 re, int256 im) public pure returns (int256, int256)
+function exp(struct Num_Complex.Complex a) public pure returns (struct Num_Complex.Complex)
 ```
 
 COMPLEX EXPONENTIAL
 
 _e^(a + bi) = e^a (cos(b) + i*sin(b))_
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| re | int256 | re |
-| im | int256 | im |
+#### Parameters
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| [0] | int256 | re re |
-| [1] | int256 | im im |
+| a | struct Num_Complex.Complex | Complex number |
 
-### complexPOW
+#### Return Values
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | struct Num_Complex.Complex | Complex Number |
+
+### pow
 
 ```solidity
-function complexPOW(int256 re, int256 im, int256 n) public pure returns (int256, int256)
+function pow(struct Num_Complex.Complex a, int256 n) public pure returns (struct Num_Complex.Complex)
 ```
 
 COMPLEX POWER
@@ -270,16 +317,18 @@ COMPLEX POWER
 _using Demoivre's formula
 overflow risk_
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| re | int256 | re |
-| im | int256 | im |
-| n | int256 | base 1e18 |
+#### Parameters
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| [0] | int256 | re re |
-| [1] | int256 | im im |
+| a | struct Num_Complex.Complex | Complex number |
+| n | int256 | base 1e18 |
+
+#### Return Values
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | struct Num_Complex.Complex | Complex number |
 
 ## Trigonometry
 
@@ -400,9 +449,13 @@ standard 360 degrees (2pi radians). From there, we get an output in range -2,147
 2,147,483,647, (which is the max value of an int32) which is then converted back to the standard
 range of -1 to 1, again scaled by 1e18_
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | _angle | uint256 | Angle to convert |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -420,9 +473,13 @@ _This is identical to the sin() method, and just computes the value by delegatin
 sin() method using the identity cos(x) = sin(x + pi/2)
 Overflow when `angle + PI_OVER_TWO > type(uint256).max` is ok, results are still accurate_
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | _angle | uint256 | Angle to convert |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -725,9 +782,13 @@ Calculates the binary exponent of x using the binary fraction method.
 _Has to use 192.64-bit fixed-point numbers.
 See https://ethereum.stackexchange.com/a/96594/24693._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | uint256 | The exponent as an unsigned 192.64-bit fixed-point number. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -743,9 +804,13 @@ Finds the zero-based index of the first one in the binary representation of x.
 
 _See the note on msb in the "Find First Set" Wikipedia article https://en.wikipedia.org/wiki/Find_first_set_
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | uint256 | The uint256 number for which to find the index of the most significant bit. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -768,11 +833,15 @@ Requirements:
 Caveats:
 - This function does not work with fixed-point numbers._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | uint256 | The multiplicand as an uint256. |
 | y | uint256 | The multiplier as an uint256. |
 | denominator | uint256 | The divisor as an uint256. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -799,10 +868,14 @@ Caveats:
     1. x * y = type(uint256).max * SCALE
     2. (x * y) % SCALE >= SCALE / 2_
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | uint256 | The multiplicand as an unsigned 60.18-decimal fixed-point number. |
 | y | uint256 | The multiplier as an unsigned 60.18-decimal fixed-point number. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -822,11 +895,15 @@ Requirements:
 - None of the inputs can be type(int256).min.
 - The result must fit within int256._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The multiplicand as an int256. |
 | y | int256 | The multiplier as an int256. |
 | denominator | int256 | The divisor as an int256. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -845,9 +922,13 @@ _Uses the Babylonian method https://en.wikipedia.org/wiki/Methods_of_computing_s
 Caveats:
 - This function does not work with fixed-point numbers._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | uint256 | The uint256 number for which to calculate the square root. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -927,6 +1008,8 @@ Calculate the absolute value of x.
 _Requirements:
 - x must be greater than MIN_SD59x18._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The number to calculate the absolute value for. |
@@ -939,10 +1022,14 @@ function avg(int256 x, int256 y) internal pure returns (int256 result)
 
 Calculates the arithmetic average of x and y, rounding down.
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The first operand as a signed 59.18-decimal fixed-point number. |
 | y | int256 | The second operand as a signed 59.18-decimal fixed-point number. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -961,6 +1048,8 @@ See https://en.wikipedia.org/wiki/Floor_and_ceiling_functions.
 
 Requirements:
 - x must be less than or equal to MAX_WHOLE_SD59x18._
+
+#### Parameters
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -984,6 +1073,8 @@ Requirements:
 
 Caveats:
 - All from "PRBMath.mulDiv"._
+
+#### Parameters
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -1018,9 +1109,13 @@ Caveats:
 - All from "exp2".
 - For any x less than -41.446531673892822322, the result is zero._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The exponent as a signed 59.18-decimal fixed-point number. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -1043,9 +1138,13 @@ Requirements:
 Caveats:
 - For any x less than -59.794705707972522261, the result is zero._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The exponent as a signed 59.18-decimal fixed-point number. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -1065,6 +1164,8 @@ See https://en.wikipedia.org/wiki/Floor_and_ceiling_functions.
 Requirements:
 - x must be greater than or equal to MIN_WHOLE_SD59x18._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The signed 59.18-decimal fixed-point number to floor. |
@@ -1079,6 +1180,8 @@ Yields the excess beyond the floor of x for positive numbers and the part of the
 of the radix point for negative numbers.
 
 _Based on the odd function definition. https://en.wikipedia.org/wiki/Fractional_part_
+
+#### Parameters
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -1096,6 +1199,8 @@ _Requirements:
 - x must be greater than or equal to MIN_SD59x18 divided by SCALE.
 - x must be less than or equal to MAX_SD59x18 divided by SCALE._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The basic integer to convert. |
@@ -1112,10 +1217,14 @@ _Requirements:
 - x * y must fit within MAX_SD59x18, lest it overflows.
 - x * y cannot be negative._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The first operand as a signed 59.18-decimal fixed-point number. |
 | y | int256 | The second operand as a signed 59.18-decimal fixed-point number. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -1132,9 +1241,13 @@ Calculates 1 / x, rounding toward zero.
 _Requirements:
 - x cannot be zero._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The signed 59.18-decimal fixed-point number for which to calculate the inverse. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -1157,9 +1270,13 @@ Caveats:
 - All from "log2".
 - This doesn't return exactly 1 for 2718281828459045235, for that we would need more fine-grained precision._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The signed 59.18-decimal fixed-point number for which to calculate the natural logarithm. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -1182,9 +1299,13 @@ Requirements:
 Caveats:
 - All from "log2"._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The signed 59.18-decimal fixed-point number for which to calculate the common logarithm. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -1207,9 +1328,13 @@ Requirements:
 Caveats:
 - The results are not perfectly accurate to the last decimal, due to the lossy precision of the iterative approximation._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The signed 59.18-decimal fixed-point number for which to calculate the binary logarithm. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -1235,10 +1360,14 @@ Requirements:
 Caveats:
 - The body is purposely left uncommented; see the NatSpec comments in "PRBMath.mulDiv" to understand how this works._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The multiplicand as a signed 59.18-decimal fixed-point number. |
 | y | int256 | The multiplier as a signed 59.18-decimal fixed-point number. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -1270,10 +1399,14 @@ Caveats:
 - All from "exp2", "log2" and "mul".
 - Assumes 0^0 is 1._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | Number to raise to given power y, as a signed 59.18-decimal fixed-point number. |
 | y | int256 | Exponent to raise x to, as a signed 59.18-decimal fixed-point number. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -1298,10 +1431,14 @@ Caveats:
 - All from "PRBMath.mulDivFixedPoint".
 - Assumes 0^0 is 1._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The base as a signed 59.18-decimal fixed-point number. |
 | y | uint256 | The exponent as an uint256. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -1329,9 +1466,13 @@ Requirements:
 - x cannot be negative.
 - x must be less than MAX_SD59x18 / SCALE._
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The signed 59.18-decimal fixed-point number for which to calculate the square root. |
+
+#### Return Values
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -1345,106 +1486,15 @@ function toInt(int256 x) internal pure returns (int256 result)
 
 Converts a signed 59.18-decimal fixed-point number to basic integer form, rounding down in the process.
 
+#### Parameters
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | x | int256 | The signed 59.18-decimal fixed-point number to convert. |
 
+#### Return Values
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | result | int256 | The same number in basic integer form. |
-
-## Complex
-
-### complex
-
-```solidity
-struct complex {
-  int256 re;
-  int256 im;
-}
-```
-
-### add
-
-```solidity
-function add(int256 re, int256 im, int256 re1, int256 im1) public pure returns (int256, int256)
-```
-
-### sub
-
-```solidity
-function sub(int256 re, int256 im, int256 re1, int256 im1) public pure returns (int256, int256)
-```
-
-### mul
-
-```solidity
-function mul(int256 re, int256 im, int256 re1, int256 im1) public pure returns (int256, int256)
-```
-
-### div
-
-```solidity
-function div(int256 re, int256 im, int256 re1, int256 im1) public pure returns (int256, int256)
-```
-
-### r2
-
-```solidity
-function r2(int256 a, int256 b) public pure returns (int256)
-```
-
-### toPolar
-
-```solidity
-function toPolar(int256 re, int256 im) public pure returns (int256, int256)
-```
-
-### fromPolar
-
-```solidity
-function fromPolar(int256 r, int256 T) public pure returns (int256 re, int256 im)
-```
-
-### atan2
-
-```solidity
-function atan2(int256 y, int256 x) public pure returns (int256 T)
-```
-
-### p_atan2
-
-```solidity
-function p_atan2(int256 y, int256 x) public pure returns (int256 T)
-```
-
-### atan1to1
-
-```solidity
-function atan1to1(int256 x) public pure returns (int256)
-```
-
-### complexLN
-
-```solidity
-function complexLN(int256 re, int256 im) public pure returns (int256, int256)
-```
-
-### complexSQRT
-
-```solidity
-function complexSQRT(int256 re, int256 im) public pure returns (int256, int256)
-```
-
-### complexEXP
-
-```solidity
-function complexEXP(int256 re, int256 im) public pure returns (int256, int256)
-```
-
-### complexPOW
-
-```solidity
-function complexPOW(int256 re, int256 im, int256 n) public pure returns (int256, int256)
-```
 

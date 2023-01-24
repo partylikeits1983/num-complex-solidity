@@ -2,12 +2,9 @@
 pragma solidity ^0.8.17;
 
 /// @title num_complex_solidity
-/// @dev COMPLEX MATH FUNCTIONS WITH 2 z INPUTS
+/// @dev COMPLEX MATH FUNCTIONS
 /// @author Alexander John Lee
-/// @notice Solidity library offering basic complex number functions where inputs and outputs are
-/// signed integers. 
-
-/// Huge thanks to the authors of the the mds1/solidity-trigonometry and prb/math repositories
+/// @notice Solidity contract offering basic complex number functionalility
 
 import "contracts/dependencies/prb-math/PRBMathSD59x18.sol";
 import "./Trigonometry.sol";
@@ -17,10 +14,12 @@ contract Num_Complex {
 
 
     /// @notice Complex Type
+    /// @dev Unable to use Solidity custom types yet
     struct Complex {
         int re;
         int im;
     }
+
 
     /// @notice Complex Type Wrapper
     /// @param re real part
@@ -32,9 +31,9 @@ contract Num_Complex {
 
 
     /// @notice ADDITION
-    /// @param a Complex number
-    /// @param b Complex number
-    /// @return a real
+    /// @param a Complex Number
+    /// @param b Complex Number
+    /// @return Complex Number
     function add(Complex memory a, Complex memory b) public pure returns (Complex memory) {
         a.re += b.re;
         a.im += b.im;
@@ -46,7 +45,7 @@ contract Num_Complex {
     /// @notice SUBTRACTION
     /// @param a Complex number
     /// @param b Complex number
-    /// @return a real
+    /// @return Complex Number
     function sub(Complex memory a, Complex memory b) public pure returns (Complex memory) {
         a.re -= b.re;
         a.im -= b.im;
@@ -56,7 +55,9 @@ contract Num_Complex {
 
 
     /// @notice MULTIPLICATION
-
+    /// @param a Complex number
+    /// @param b Complex number
+    /// @return Complex Number
     function mul(Complex memory a, Complex memory b) public pure returns (Complex memory) {
         int _a = a.re * b.re;
         int _b = a.im * b.im;
@@ -74,6 +75,9 @@ contract Num_Complex {
 
 
     /// @notice DIVISION
+    /// @param a Complex number
+    /// @param b Complex number
+    /// @return Complex Number
     function div(Complex memory a, Complex memory b) public pure returns (Complex memory) {
         int numA = a.re * b.re + a.im * b.im;
         int den = b.re**2 + b.im**2;
@@ -193,11 +197,10 @@ contract Num_Complex {
 
 
     /// @notice COMPLEX NATURAL LOGARITHM
-    function complexln(Complex memory a) public pure returns (Complex memory) {
-        // int T;
-
+    /// @param a Complex number
+    /// @return Complex Number
+    function ln(Complex memory a) public pure returns (Complex memory) {
         (a.re, a.im) = toPolar(a);
-
         a.re = a.re.ln();
 
         return a;
@@ -206,16 +209,16 @@ contract Num_Complex {
 
     /// @notice COMPLEX SQUARE ROOT
     /// @dev only works if 0 < re & im
-    function complexSQRT(Complex memory a) public pure returns (Complex memory) {
+    /// @param a Complex number
+    /// @return Complex Number
+    function sqrt(Complex memory a) public pure returns (Complex memory) {
         // if imaginary is 0 
         if (a.im == 0) {
             // if real is positive
             if (a.re > 0) {
                 // simple positive real √r, and copy `im` for its sign
                 a.re = a.re.sqrt();
-            }
-            // if real is negative
-            else {
+            } else {  // if real is negative
                 // √(r e^(iπ)) = √r e^(iπ/2) = i√r
                 // √(r e^(-iπ)) = √r e^(-iπ/2) = -i√r
                 // if real is negative
@@ -223,25 +226,21 @@ contract Num_Complex {
                 // if imaginary is positive
                 if (a.im > 0) {
                     a.re = 0;
-                }
-                else {
+                } else {
                     // if imaginary is negative
                     a.im = -a.im;
                 }
             }
-        }
-        else if (a.re == 0) {
+        } else if (a.re == 0) {
             // √(r e^(iπ/2)) = √r e^(iπ/4) = √(r/2) + i√(r/2)
             // √(r e^(-iπ/2)) = √r e^(-iπ/4) = √(r/2) - i√(r/2
             a.re = (a.im.abs() / 2).sqrt();
             if (a.re > 0) {
                 a.im = a.re;
-            }
-            else {
+            } else {
                 a.im = -a.re;
             }
-        }
-        else {
+        } else {
             // formula: sqrt(r e^(it)) = sqrt(r) e^(it/2)
             (int r, int T) = toPolar(a);
             a = fromPolar(r.sqrt(), T/2);
@@ -253,8 +252,8 @@ contract Num_Complex {
     /// @notice COMPLEX EXPONENTIAL
     /// @dev e^(a + bi) = e^a (cos(b) + i*sin(b))
     /// @param a Complex number
-    /// @return a Complex number
-    function complexEXP(Complex memory a) public pure returns (Complex memory) {
+    /// @return Complex Number
+    function exp(Complex memory a) public pure returns (Complex memory) {
         int r = a.re.exp();
         a = fromPolar(r, a.im);
 
@@ -268,7 +267,7 @@ contract Num_Complex {
     /// @param a Complex number
     /// @param n base 1e18
     /// @return Complex number
-    function complexPOW(Complex memory a, int n) public pure returns (Complex memory) {
+    function pow(Complex memory a, int n) public pure returns (Complex memory) {
        
         (int r, int theta) = toPolar(a);
 

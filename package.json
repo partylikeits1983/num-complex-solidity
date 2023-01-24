@@ -32,8 +32,7 @@
     "hardhat-abi-exporter": "^2.10.0",
     "mathjs": "^11.0.1",
     "prb-math": "^2.4.3",
-    "solidity-coverage": "^0.7.21",
-    "solidity-docgen": "^0.6.0-beta.22"
+    "solidity-coverage": "^0.7.21"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.1.0",
@@ -44,6 +43,7 @@
     "hardhat-deploy": "^0.11.11",
     "hardhat-gas-reporter": "^1.0.8",
     "mocha": "^10.0.0",
+    "solidity-docgen": "^0.6.0-beta.34",
     "ts-node": "^10.9.1"
   }
 }
