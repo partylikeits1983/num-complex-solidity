@@ -106,6 +106,7 @@ contract Num_Complex {
     function r2(int a, int b) public pure returns (int) {
         a = a.mul(a);
         b = b.mul(b);
+
         return (a + b).sqrt();
     }
 
@@ -144,6 +145,8 @@ contract Num_Complex {
             a.re = (r * Trigonometry.cos(uint(T))) / 1e18;
             a.im = -(r * Trigonometry.sin(uint(T * -1))) / 1e18;
         }
+
+        return a;
     }
 
 
@@ -200,6 +203,7 @@ contract Num_Complex {
     /// @return T T
     function atan1to1(int x) public pure returns (int) {
         int y = ((7.85e17 * x) / 1e18) - (((x* (x - 1e18)) / 1e18) * (2.447e17 + ((6.63e16 * x)/1e18))) / 1e18;
+        
         return y;
     }
 
@@ -253,6 +257,7 @@ contract Num_Complex {
             (int r, int T) = toPolar(a);
             a = fromPolar(r.sqrt(), T/2);
         }
+        
         return a;
     }
 

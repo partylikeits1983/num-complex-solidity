@@ -1,7 +1,5 @@
 import "hardhat-deploy";
 import "@nomiclabs/hardhat-waffle";
-import "hardhat-gas-reporter";
-import "hardhat-abi-exporter";
 import "solidity-docgen";
 import "solidity-coverage";
 
