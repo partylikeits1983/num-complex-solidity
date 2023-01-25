@@ -14,7 +14,7 @@ contract Num_Complex {
 
 
     /// @notice Complex Type
-    /// @dev Unable to use Solidity custom types yet
+    /// @dev Elementary Type - unable to use Solidity custom types yet
     struct Complex {
         int re;
         int im;
@@ -257,7 +257,7 @@ contract Num_Complex {
             (int r, int T) = toPolar(a);
             a = fromPolar(r.sqrt(), T/2);
         }
-        
+
         return a;
     }
 
