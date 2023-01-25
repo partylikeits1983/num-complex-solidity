@@ -4,5 +4,5 @@
 
 - [ ] Contract compiles without warnings.
 - [ ] Added unit test demonstrating use case functionality.
-- [ ] Pull request follows Solidity style guidelines 
+- [ ] Pull request follows Solidity style guidelines.
 
