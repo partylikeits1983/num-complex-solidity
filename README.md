@@ -68,12 +68,6 @@ npx hardhat test tests/math.test.ts
 
 Big thanks to the authors of the the - [mds1/solidity-trigonometry](https://github.com/mds1/solidity-trigonometry) and the [prb-math](https://github.com/paulrberg/prb-math) repositories
 
-### Sponsor this Repository
-
-If you would like to support this repository please feel free to make a contribution to this address:
-0x74d6E0f5bff59A2a6b3CDe43c26EcAaC31101722
-
-All proceeds will go to the development of this repository. Any contribution is greatly appreciated.
 
 ### Sponsors
 
