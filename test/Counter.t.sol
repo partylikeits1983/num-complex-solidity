@@ -2,23 +2,25 @@
 pragma solidity ^0.8.13;
 
 import {Test, console2} from "forge-std/Test.sol";
-import {Counter} from "../src/Counter.sol";
+import {Num_Complex} from "../src/Complex.sol";
+
+import {SD59x18, sd} from "@prb/math/src/SD59x18.sol";
 
 contract CounterTest is Test {
-    Counter public counter;
+    Num_Complex public num_complex;
 
     function setUp() public {
-        counter = new Counter();
-        counter.setNumber(0);
+        num_complex = new Num_Complex();
     }
 
-    function test_Increment() public {
-        counter.increment();
-        assertEq(counter.number(), 1);
+    function test_add() public {
+        Num_Complex.Complex memory a = Num_Complex.Complex({re: sd(1e18), im: sd(1e18)});
+        Num_Complex.Complex memory b = Num_Complex.Complex({re: sd(1e18), im: sd(1e18)});
+
+        Num_Complex.Complex memory result = num_complex.add(a, b);
+
+        assertEq(result.re.unwrap(), int(2e18));
+        assertEq(result.im.unwrap(), int(2e18));
     }
 
-    function testFuzz_SetNumber(uint256 x) public {
-        counter.setNumber(x);
-        assertEq(counter.number(), x);
-    }
 }
