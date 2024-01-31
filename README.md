@@ -4,12 +4,6 @@
 
 # Usage
 
-Install via npm:
-
-```sh
-$ npm i num_complex_solidity
-```
-
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
