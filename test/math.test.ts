@@ -6,287 +6,230 @@ import Complex from "complex.js";
 import { sqrt } from "mathjs";
 
 describe("Complex Number Library", () => {
-  async function initialize() {
-    const Complex = await ethers.getContractFactory("Num_Complex");
-    const complex = await Complex.deploy();
+	async function initialize() {
+		const Complex = await ethers.getContractFactory("Num_Complex");
+		const complex = await Complex.deploy();
 
-    const a = -1;
-    const b = 2;
+		const a = -1;
+		const b = 2;
 
-    const real = ethers.utils.parseEther(a.toString());
-    const imag = ethers.utils.parseEther(b.toString());
+		const real = ethers.utils.parseEther(a.toString());
+		const imag = ethers.utils.parseEther(b.toString());
 
-    return { complex, a, b, real, imag };
-  }
-  describe("Complex Tests", function () {
-    it("Should add", async () => {
-      const { complex, a, b, real, imag } = await loadFixture(initialize);
+		return { complex, a, b, real, imag };
+	}
+	describe("Complex Tests", function () {
+		it("Should add", async () => {
+			const { complex, a, b, real, imag } = await loadFixture(initialize);
 
-      const c1 = new Complex(a, b);
-      const c2 = new Complex(a, b);
+			const c1 = new Complex(a, b);
+			const c2 = new Complex(a, b);
 
-      const result_js = c1.add(c2);
+			const result_js = c1.add(c2);
 
-      const a1 = await complex.wrap(real, imag);
-      const b1 = await complex.wrap(real, imag)
+			const a1 = await complex.wrap(real, imag);
+			const b1 = await complex.wrap(real, imag);
 
-      const result_sol = await complex.add(a1, b1);
+			const result_sol = await complex.add(a1, b1);
 
-      const re = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result_sol[0]),
-        "ether"
-      ));
-      const im = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result_sol[1]),
-        "ether"
-      ));
-      expect(result_js.re == re);
-      expect(result_js.im == im);
-    });
-    it("Should subtract", async () => {
-      const { complex, a, b, real, imag } = await loadFixture(initialize);
+			const re = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result_sol[0]), "ether"));
+			const im = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result_sol[1]), "ether"));
+			expect(result_js.re == re);
+			expect(result_js.im == im);
+		});
+		it("Should subtract", async () => {
+			const { complex, a, b, real, imag } = await loadFixture(initialize);
 
-      const c1 = new Complex(a, b);
-      const c2 = new Complex(a, b);
+			const c1 = new Complex(a, b);
+			const c2 = new Complex(a, b);
 
-      const result_js = c1.sub(c2);
+			const result_js = c1.sub(c2);
 
-      const a1 = await complex.wrap(real, imag);
-      const b1 = await complex.wrap(real, imag)
+			const a1 = await complex.wrap(real, imag);
+			const b1 = await complex.wrap(real, imag);
 
-      const result_sol = await complex.sub(a1, b1);
+			const result_sol = await complex.sub(a1, b1);
 
-      const re = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result_sol[0]),
-        "ether"
-      ));
-      const im = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result_sol[1]),
-        "ether"
-      ));
-      expect(result_js.re == re);
-      expect(result_js.im == im);
-    });
-  it("Should multiply", async () => {
-    const { complex, a, b, real, imag } = await loadFixture(initialize);
+			const re = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result_sol[0]), "ether"));
+			const im = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result_sol[1]), "ether"));
+			expect(result_js.re == re);
+			expect(result_js.im == im);
+		});
+		it("Should multiply", async () => {
+			const { complex, a, b, real, imag } = await loadFixture(initialize);
 
-      const c1 = new Complex(a, b);
-      const c2 = new Complex(a, b);
+			const c1 = new Complex(a, b);
+			const c2 = new Complex(a, b);
 
-      const result_js = c1.mul(c2);
+			const result_js = c1.mul(c2);
 
-      const a1 = await complex.wrap(real, imag);
-      const b1 = await complex.wrap(real, imag)
+			const a1 = await complex.wrap(real, imag);
+			const b1 = await complex.wrap(real, imag);
 
-      const result_sol = await complex.mul(a1, b1);
+			const result_sol = await complex.mul(a1, b1);
 
-      const re = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result_sol[0]),
-        "ether"
-      ));
-      const im = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result_sol[1]),
-        "ether"
-      ));
-      expect(result_js.re == re);
-      expect(result_js.im == im);
-    });
-    it("Should divide", async () => {
-      const { complex, a, b, real, imag } = await loadFixture(initialize);
+			const re = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result_sol[0]), "ether"));
+			const im = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result_sol[1]), "ether"));
+			expect(result_js.re == re);
+			expect(result_js.im == im);
+		});
+		it("Should divide", async () => {
+			const { complex, a, b, real, imag } = await loadFixture(initialize);
 
-      const c1 = new Complex(a, b);
-      const c2 = new Complex(a, b);
+			const c1 = new Complex(a, b);
+			const c2 = new Complex(a, b);
 
-      const result_js = c1.mul(c2);
+			const result_js = c1.mul(c2);
 
-      const a1 = await complex.wrap(real, imag);
-      const b1 = await complex.wrap(real, imag)
+			const a1 = await complex.wrap(real, imag);
+			const b1 = await complex.wrap(real, imag);
 
-      const result = await complex.div(a1, b1);
+			const result = await complex.div(a1, b1);
 
-      const re = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[0]),
-        "ether"
-      ));
-      const im = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result[1]),
-        "ether"
-      ));
-      expect(result_js.re == re);
-      expect(result_js.im == im);
-    });
-    it("Should calculate r2", async () => {
-      const { complex, a, b } = await loadFixture(initialize);
+			const re = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result[0]), "ether"));
+			const im = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result[1]), "ether"));
+			expect(result_js.re == re);
+			expect(result_js.im == im);
+		});
+		it("Should calculate r2", async () => {
+			const { complex, a, b } = await loadFixture(initialize);
 
-      const c1 = new Complex(a, b);
+			const c1 = new Complex(a, b);
 
-      const a1 = c1.re * c1.re;
-      const b1 = c1.im * c1.im;
+			const a1 = c1.re * c1.re;
+			const b1 = c1.im * c1.im;
 
-      const result_js = sqrt(a1 + b1);
+			const result_js = sqrt(a1 + b1);
 
-      const re1 = ethers.utils.parseEther(a.toString());
-      const im1 = ethers.utils.parseEther(b.toString());
+			const re1 = ethers.utils.parseEther(a.toString());
+			const im1 = ethers.utils.parseEther(b.toString());
 
-      const result = await complex.r2(re1, im1);
+			const result = await complex.r2(re1, im1);
 
-      const r2 = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result), "ether"));
-      expect(result_js == r2);
-    });
-    it("toPolar", async () => {
-      const { complex, a, b } = await loadFixture(initialize);
-  
-      const n = await complex.wrap(ethers.utils.parseEther(a.toString()), ethers.utils.parseEther(b.toString()));
-      const result = await complex.toPolar(n);
-  
-      const expectedMagnitude = Math.sqrt(a*a + b*b);
-      const expectedAngle = Math.atan2(b, a);
-  
-      const resultMagnitude = Number(ethers.utils.formatUnits(result[0]));
-      const resultAngle = Number(ethers.utils.formatUnits(result[1]));
-  
-      expect(resultMagnitude).to.be.closeTo(expectedMagnitude, 0.005);
-      expect(resultAngle).to.be.closeTo(expectedAngle, 0.005);
-  });
-  
-    it("Should calculate non precise atan2", async () => {
-      const { complex, a, b } = await loadFixture(initialize);
+			const r2 = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result), "ether"));
+			expect(result_js == r2);
+		});
+		it("toPolar", async () => {
+			const { complex, a, b } = await loadFixture(initialize);
 
-      var result_js = Math.atan2(a, b);
+			const n = await complex.wrap(ethers.utils.parseEther(a.toString()), ethers.utils.parseEther(b.toString()));
+			const result = await complex.toPolar(n);
 
-      const y = ethers.utils.parseEther(a.toString());
-      const x = ethers.utils.parseEther(b.toString());
+			const expectedMagnitude = Math.sqrt(a * a + b * b);
+			const expectedAngle = Math.atan2(b, a);
 
-      const result = await complex.atan2(y, x);
+			const resultMagnitude = Number(ethers.utils.formatUnits(result[0]));
+			const resultAngle = Number(ethers.utils.formatUnits(result[1]));
 
-      const atan2 = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result),
-        "ether"
-      ));
-      expect(result_js).to.be.closeTo(atan2, 0.1);
-    });
-    it("Should calculate precise atan2", async () => {
-      const { complex, a, b } = await loadFixture(initialize);
+			expect(resultMagnitude).to.be.closeTo(expectedMagnitude, 0.005);
+			expect(resultAngle).to.be.closeTo(expectedAngle, 0.005);
+		});
 
-      var result_js = Math.atan2(a, b);
+		it("Should calculate non precise atan2", async () => {
+			const { complex, a, b } = await loadFixture(initialize);
 
-      const y = ethers.utils.parseEther(a.toString());
-      const x = ethers.utils.parseEther(b.toString());
+			var result_js = Math.atan2(a, b);
 
-      const result = await complex.p_atan2(y, x);
+			const y = ethers.utils.parseEther(a.toString());
+			const x = ethers.utils.parseEther(b.toString());
 
-      const atan2 = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result),
-        "ether"
-      ));
-      expect(result_js).to.be.closeTo(atan2, 0.01);
-    });
-    it("Should calculate more precise atan2 (1 to 1)", async () => {
-      const { complex } = await loadFixture(initialize);
+			const result = await complex.atan2(y, x);
 
-      var input = 2 / 3;
+			const atan2 = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result), "ether"));
+			expect(result_js).to.be.closeTo(atan2, 0.1);
+		});
+		it("Should calculate precise atan2", async () => {
+			const { complex, a, b } = await loadFixture(initialize);
 
-      var result_js = Math.atan2(2, 3);
+			var result_js = Math.atan2(a, b);
 
-      var sol_input = ethers.utils.parseEther(input.toString());
+			const y = ethers.utils.parseEther(a.toString());
+			const x = ethers.utils.parseEther(b.toString());
 
-      const result = await complex.atan1to1(sol_input);
+			const result = await complex.p_atan2(y, x);
 
-      const atan2 = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result),
-        "ether"
-      ));
-      expect(result_js).to.be.closeTo(atan2, 0.001);
-    });
-    it("Should calculate complex ln", async () => {
-      const { complex, a, b, real, imag } = await loadFixture(initialize);
+			const atan2 = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result), "ether"));
+			expect(result_js).to.be.closeTo(atan2, 0.01);
+		});
+		it("Should calculate more precise atan2 (1 to 1)", async () => {
+			const { complex } = await loadFixture(initialize);
 
-      const c = new Complex(a, b);
+			var input = 2 / 3;
 
-      const result_js = c.log();
+			var result_js = Math.atan2(2, 3);
 
-      const a1 = await complex.wrap(real, imag);
+			var sol_input = ethers.utils.parseEther(input.toString());
 
-      const result_sol = await complex.ln(a1);
+			const result = await complex.atan1to1(sol_input);
 
-      const re = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result_sol[0]),
-        "ether"
-      ));
-      const im = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result_sol[1]),
-        "ether"
-      ));
-      expect(result_js.re).to.be.closeTo(re, 0.005);
-      expect(result_js.im).to.be.closeTo(im, 0.005);
-    });
-    it("Should calculate complex sqrt", async () => {
-      const { complex, a, b, real, imag } = await loadFixture(initialize);
+			const atan2 = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result), "ether"));
+			expect(result_js).to.be.closeTo(atan2, 0.001);
+		});
+		it("Should calculate complex ln", async () => {
+			const { complex, a, b, real, imag } = await loadFixture(initialize);
 
-      const c = new Complex(a, b);
+			const c = new Complex(a, b);
 
-      const result_js = c.sqrt();
+			const result_js = c.log();
 
-      const a1 = await complex.wrap(real, imag);
+			const a1 = await complex.wrap(real, imag);
 
-      const result_sol = await complex.sqrt(a1);
+			const result_sol = await complex.ln(a1);
 
-      const re = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result_sol[0]),
-        "ether"
-      ));
-      const im = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result_sol[1]),
-        "ether"
-      ));
-      expect(result_js.re).to.be.closeTo(re, 0.003);
-      expect(result_js.im).to.be.closeTo(im, 0.003);
-    });
-    it("Should calculate complex exponential", async () => {
-      const { complex, a, b, real, imag } = await loadFixture(initialize);
+			const re = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result_sol[0]), "ether"));
+			const im = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result_sol[1]), "ether"));
+			expect(result_js.re).to.be.closeTo(re, 0.005);
+			expect(result_js.im).to.be.closeTo(im, 0.005);
+		});
+		it("Should calculate complex sqrt", async () => {
+			const { complex, a, b, real, imag } = await loadFixture(initialize);
 
-      const c = new Complex(a, b);
+			const c = new Complex(a, b);
 
-      const result_js = c.exp();
+			const result_js = c.sqrt();
 
-      const a1 = await complex.wrap(real, imag);
+			const a1 = await complex.wrap(real, imag);
 
-      const result_sol = await complex.exp(a1);
+			const result_sol = await complex.sqrt(a1);
 
-      const re = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result_sol[0]),
-        "ether"
-      ));
-      const im = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result_sol[1]),
-        "ether"
-      ));
-      expect(result_js.re).to.be.closeTo(re, 0.000001);
-      expect(result_js.im).to.be.closeTo(im, 0.000001);
-    });
-    it("Should calculate complex power", async () => {
-      const { complex, a, b, real, imag } = await loadFixture(initialize);
+			const re = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result_sol[0]), "ether"));
+			const im = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result_sol[1]), "ether"));
+			expect(result_js.re).to.be.closeTo(re, 0.003);
+			expect(result_js.im).to.be.closeTo(im, 0.003);
+		});
+		it("Should calculate complex exponential", async () => {
+			const { complex, a, b, real, imag } = await loadFixture(initialize);
 
-      const c = new Complex(a, b);
+			const c = new Complex(a, b);
 
-      const result_js = c.pow(2);
+			const result_js = c.exp();
 
-      const a1 = await complex.wrap(real, imag);
+			const a1 = await complex.wrap(real, imag);
 
-      const n = ethers.utils.parseEther("2");
+			const result_sol = await complex.exp(a1);
 
-      const result_sol = await complex.pow(a1, n);
+			const re = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result_sol[0]), "ether"));
+			const im = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result_sol[1]), "ether"));
+			expect(result_js.re).to.be.closeTo(re, 0.000001);
+			expect(result_js.im).to.be.closeTo(im, 0.000001);
+		});
+		it("Should calculate complex power", async () => {
+			const { complex, a, b, real, imag } = await loadFixture(initialize);
 
-      const re = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result_sol[0]),
-        "ether"
-      ));
-      const im = Number(ethers.utils.formatUnits(
-        ethers.BigNumber.from(result_sol[1]),
-        "ether"
-      ));
-      expect(result_js.re).to.be.closeTo(re, 0.02);
-      expect(result_js.im).to.be.closeTo(im, 0.02);
-    });
-  });
+			const c = new Complex(a, b);
+
+			const result_js = c.pow(2);
+
+			const a1 = await complex.wrap(real, imag);
+
+			const n = ethers.utils.parseEther("2");
+
+			const result_sol = await complex.pow(a1, n);
+
+			const re = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result_sol[0]), "ether"));
+			const im = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result_sol[1]), "ether"));
+			expect(result_js.re).to.be.closeTo(re, 0.02);
+			expect(result_js.im).to.be.closeTo(im, 0.02);
+		});
+	});
 });
