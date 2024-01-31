@@ -133,6 +133,22 @@ describe("Complex Number Library", () => {
       const r2 = Number(ethers.utils.formatUnits(ethers.BigNumber.from(result), "ether"));
       expect(result_js == r2);
     });
+    it("toPolar", async () => {
+      const { complex, a, b } = await loadFixture(initialize);
+  
+      const n = await complex.wrap(ethers.utils.parseEther(a.toString()), ethers.utils.parseEther(b.toString()));
+      const result = await complex.toPolar(n);
+  
+      const expectedMagnitude = Math.sqrt(a*a + b*b);
+      const expectedAngle = Math.atan2(b, a);
+  
+      const resultMagnitude = Number(ethers.utils.formatUnits(result[0]));
+      const resultAngle = Number(ethers.utils.formatUnits(result[1]));
+  
+      expect(resultMagnitude).to.be.closeTo(expectedMagnitude, 0.005);
+      expect(resultAngle).to.be.closeTo(expectedAngle, 0.005);
+  });
+  
     it("Should calculate non precise atan2", async () => {
       const { complex, a, b } = await loadFixture(initialize);
 

@@ -90,7 +90,7 @@ contract Num_Complex {
         a = a.mul(a);
         b = b.mul(b);
 
-        return (a + b).sqrt();
+        return (a + b).abs().sqrt();
     }
 
     /// @notice CONVERT COMPLEX NUMBER TO POLAR COORDINATES
@@ -100,16 +100,9 @@ contract Num_Complex {
     /// @return T theta
     function toPolar(Complex memory a) public pure returns (SD59x18, SD59x18) {
         SD59x18 r = r2(a.re, a.im);
-        //int BdivA = re / im;
-        if (r.unwrap() > 0) {
-            // im/re or re/im ??
-            SD59x18 T = p_atan2(a.im, a.re);
-            return (r, T);
-        } else {
-            // !!! if r is negative !!!
-            SD59x18 T = p_atan2(a.im, a.re) + sd(180e18);
-            return (r, T);
-        }
+        SD59x18 T = p_atan2(a.im, a.re);
+
+        return (r, T);
     }
 
     /// @notice CONVERT FROM POLAR TO COMPLEX
@@ -152,14 +145,14 @@ contract Num_Complex {
             return T;
         }
     }
-
+    
     /// @notice ATAN2(Y,X) FUNCTION (MORE PRECISE MORE GAS)
     /// @param y y
     /// @param x x
     /// @return T T
     function p_atan2(SD59x18 y, SD59x18 x) public pure returns (SD59x18 T) {
         SD59x18 c1 = sd(3141592653589793300 / 4);
-        SD59x18 c2 = sd(3) * c1;
+        SD59x18 c2 = sd(3e18) * c1;
         SD59x18 abs_y = y.abs();
 
         if (x.unwrap() >= 0) {
