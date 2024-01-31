@@ -264,3 +264,17 @@ contract Num_Complex {
         return result;
     }
 }
+
+
+contract model {
+    Num_Complex num_complex;
+
+    Num_Complex.Complex a = Num_Complex.Complex({re:sd(1e18), im: sd(1e18)});
+
+    function test() public returns (Num_Complex.Complex memory) {
+
+        Num_Complex.Complex memory result = num_complex.ln(a);
+
+        return result;
+    }
+}

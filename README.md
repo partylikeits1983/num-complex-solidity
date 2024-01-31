@@ -12,18 +12,18 @@ $ npm i num_complex_solidity
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.24;
 
-import "@partylikeits1983/complex_sol/contracts/Num_Complex.sol";
+import "./Num_Complex.sol";
 
 contract model {
-    Num_Complex Complex;
+    Num_Complex num_complex;
 
-    Num_Complex.Complex a = Complex.wrap(0, 1e18);
+    Num_Complex.Complex a = Num_Complex.Complex({re:sd(1e18), im: sd(1e18)});
 
     function test() public returns (Num_Complex.Complex memory) {
 
-        Num_Complex.Complex memory result = Complex.ln(a);
+        Num_Complex.Complex memory result = num_complex.ln(a);
 
         return result;
     }
@@ -56,6 +56,9 @@ Version 1.0
 
 
 ## Testing
+```sh
+pnpm i
+```
 
 ```sh
 npx hardhat test tests/math.test.ts
