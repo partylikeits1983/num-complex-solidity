@@ -40,7 +40,7 @@ Version 1.0
 | p_atan2     | precise tan^-1      | 3442           |
 | atan1to1    | tan^-1 from -1 to 1 | 2496           |
 | sqrt        | (a+bi)^(1/2)        | 8812           |
-| pow         | when n<1 (a+bi)^n   | 18182          |
+| pow         | (a+bi)^n            | 18182          |
 | exp         | e^(a+bi)            | 4986           |
 
 
