@@ -1,92 +1,118 @@
-# num_complex_solidity
+# num-complex-solidity
 
-`Complex` numbers for Solidity.
+Gas-conscious complex arithmetic for Solidity, built on PRBMath's signed 59.18-decimal fixed-point type.
 
-# Usage
+Version 2 is a breaking modernization. `ComplexMath` is an internal library, so consumers no longer deploy or call a
+state-free helper contract. The compiler inlines only the functions a consumer uses.
+
+## Install
+
+```sh
+npm install num-complex-solidity @prb/math
+```
+
+Foundry users should make both packages resolvable from `node_modules`:
+
+```text
+@prb/math/=node_modules/@prb/math/
+num-complex-solidity/=node_modules/num-complex-solidity/
+```
+
+## Usage
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity 0.8.36;
 
-import "./Num_Complex.sol";
+import { SD59x18, sd } from "@prb/math/src/SD59x18.sol";
+import { Complex, ComplexMath } from "num-complex-solidity/contracts/Complex.sol";
 
-contract model {
-    Num_Complex num_complex;
+contract Example {
+    using ComplexMath for Complex;
 
-    Num_Complex.Complex a = Num_Complex.Complex({re:sd(1e18), im: sd(1e18)});
-
-    function test() public returns (Num_Complex.Complex memory) {
-
-        Num_Complex.Complex memory result = num_complex.ln(a);
-
-        return result;
+    function square(int256 re, int256 im) external pure returns (int256, int256) {
+        Complex memory value = ComplexMath.complex(sd(re), sd(im));
+        Complex memory result = value.powu(2);
+        return (result.re.unwrap(), result.im.unwrap());
     }
 }
-
 ```
 
-Version 1.0
+Inputs and outputs use 18 decimals: `1e18` represents `1`, and `-25e17` represents `-2.5`.
 
-| Functions   | Description         | Gas Estimation |
-| ----------- | ------------------- | -------------- |
-| add         | (a+bi) + (a+bi)     | 698            |
-| sub         | (a+bi) - (a+bi)     | 687            |
-| mul         | (a+bi) \* (a+bi)    | 2212           |
-| div         | (a+bi) / (a+bi)     | 4099           |
-| r2          | a^2 + b^2 = c^2     | 2188           |
-| fromPolar   | z=r(cosθ+isinθ)     | 2518           |
-| toPolar     | z=r(cosθ+isinθ)     | 5506           |
-| atan2       | tan^-1              | 2632           |
-| p_atan2     | precise tan^-1      | 3442           |
-| atan1to1    | tan^-1 from -1 to 1 | 2496           |
-| sqrt        | (a+bi)^(1/2)        | 8812           |
-| pow         | (a+bi)^n            | 18182          |
-| exp         | e^(a+bi)            | 4986           |
+## API
 
+| Function | Meaning | Notes |
+| --- | --- | --- |
+| `complex`, `components` | construct/deconstruct | Explicit PRBMath types |
+| `add`, `sub`, `neg`, `conjugate` | basic arithmetic | Exact unless checked arithmetic overflows |
+| `mul`, `square`, `div` | product, optimized square, and quotient | Division uses an overflow-resistant scaled ratio |
+| `normSquared` | `re² + im²` | Cheaper, but intermediate squares can overflow |
+| `magnitude` | `sqrt(re² + im²)` | Scaled algorithm avoids squaring the largest component |
+| `toPolar`, `fromPolar` | Cartesian/polar conversion | Signed angles are reduced modulo `2*pi` |
+| `atan2`, `atanUnit` | argument approximations | About 0.0015 radians maximum polynomial error |
+| `ln`, `sqrt`, `exp` | principal complex functions | `sqrt` works in every quadrant |
+| `pow` | fixed-point exponent | Uses polar form; suitable for fractional exponents |
+| `powu` | unsigned integer exponent | Exponentiation by squaring; prefer for integer powers |
 
-## Documentation
+All library functions are `internal pure`. A contract's deployed bytecode includes only the reachable implementation.
+PRBMath custom errors are propagated for fixed-point domain and overflow failures. Complex division by zero uses
+`ComplexMath.ComplexDivisionByZero`.
 
-[num_complex_solidity documentation](docs/index.md)
+## Gas
 
+The optimizer uses 1,000 runs and the IR pipeline. Representative Prague-EVM gas from the external test harness is:
 
-## Testing
+| Operation | Gas |
+| --- | ---: |
+| `add` | 1,419 |
+| `square` | 2,207 |
+| `mul` | 2,912 |
+| `div` | 4,052 |
+| `sqrt` for `3 + 4i` | 6,455 |
+| `powu(..., 5)` | 6,501 |
+
+Run `npm run gas` to reproduce the report. These figures include ABI dispatch and vary with compiler, optimizer, inputs,
+and the consuming contract. They should not be compared directly with the version 1 README's estimates, whose compiler
+settings and measurement method were not recorded.
+
+The main efficiency changes are inlining instead of an external helper call, a shared sine/cosine lookup, direct
+Cartesian square root, polynomial multiplication instead of general-purpose `pow` inside `atan2`, and the `powu`
+integer fast path.
+
+## Version 1 migration
+
+| Version 1 | Version 2 |
+| --- | --- |
+| Deploy `Num_Complex` | `using ComplexMath for Complex` |
+| `Num_Complex.Complex` | file-level `Complex` |
+| `wrap` / `unwrap` | `complex` / `components` |
+| `r2` | `magnitude` (or `normSquared`) |
+| `p_atan2` / `atan1to1` | `atan2` / `atanUnit` |
+| `pow(value, sd(integer))` | `powu(value, integer)` |
+
+Version 2 also fixes the version 1 division denominator, negative polar angles, negative-real square roots, and tests
+that constructed assertions without executing them.
+
+## Development
+
+Install [Foundry](https://getfoundry.sh/) and Node.js 20 or newer, then run:
+
 ```sh
-pnpm i
+npm install
+npm test
+npm run test:fuzz
+npm run fmt
+npm run gas
 ```
 
-```sh
-npx hardhat test tests/math.test.ts
-```
+The end-to-end test imports the repository through its package name and calls the inlined library from a deployed
+consumer contract.
 
+## Accuracy and security
 
-### Acknowledgements
+This library uses fixed-point approximations and a lookup-table trigonometry implementation. Transcendental results are
+not exact, and rounding compounds across chained operations. Check domain limits in PRBMath, use application-specific
+tolerances, and obtain an independent audit before using the library in value-bearing production systems.
 
-Big thanks to the authors of the the - [mds1/solidity-trigonometry](https://github.com/mds1/solidity-trigonometry) and the [prb-math](https://github.com/paulrberg/prb-math) repositories
-
-
-### Sponsors
-
-[Paul Berg](https://github.com/paulrberg)
-
-### License
-
-Licensed under either of
-
-- [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-- [MIT license](http://opensource.org/licenses/MIT)
-
-at your option.
-
-### Contribution
-
-Unless you explicitly state otherwise, any contribution intentionally submitted
-for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
-dual licensed as above, without any additional terms or conditions.
-
-
-### Formatting 
-
-```
-npx prettier --write 'contracts/*.sol'
-npx prettier --write '**/*.ts'
-```
+Licensed under the MIT License.

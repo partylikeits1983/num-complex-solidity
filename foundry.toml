@@ -1,0 +1,18 @@
+[profile.default]
+src = "contracts"
+test = "test"
+libs = ["node_modules"]
+solc_version = "0.8.36"
+evm_version = "prague"
+optimizer = true
+optimizer_runs = 1_000
+via_ir = true
+gas_reports = ["ComplexHarness"]
+fuzz.runs = 1_000
+
+[fmt]
+line_length = 120
+tab_width = 4
+bracket_spacing = true
+int_types = "long"
+quote_style = "double"

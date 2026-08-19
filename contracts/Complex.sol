@@ -1,278 +1,210 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity >=0.8.24 <0.9.0;
 
-/// @title num_complex_solidity
-/// @dev COMPLEX MATH FUNCTIONS
-/// @author Alexander John Lee
-/// @notice Solidity contract offering basic complex number functionalility
+import { SD59x18, sd } from "@prb/math/src/SD59x18.sol";
 
-import {SD59x18, sd} from "@prb/math/src/SD59x18.sol";
-import "./Trigonometry.sol";
+import { Trigonometry } from "./Trigonometry.sol";
 
-contract Num_Complex {
-	/// @notice Complex Type
-	/// @dev Elementary Type - unable to use Solidity custom types yet
-	struct Complex {
-		SD59x18 re;
-		SD59x18 im;
-	}
-
-	/// @notice Complex Type Wrap
-	/// @param re real part
-	/// @param im imaginary part
-	/// @return Complex type
-	function wrap(SD59x18 re, SD59x18 im) public pure returns (Complex memory) {
-		return Complex(re, im);
-	}
-
-	/// @notice Complex Type Unwrap
-	/// @param a Complex Number
-	/// @return real imaginary
-	function unwrap(Complex memory a) public pure returns (SD59x18, SD59x18) {
-		return (a.re, a.im);
-	}
-
-	/// @notice ADDITION
-	/// @param a Complex Number
-	/// @param b Complex Number
-	/// @return Complex Number
-	function add(Complex memory a, Complex memory b) public pure returns (Complex memory) {
-		Complex memory result = Complex({re: a.re.add(b.re), im: a.im.add(b.im)});
-
-		return result;
-	}
-
-	/// @notice SUBTRACTION
-	/// @param a Complex number
-	/// @param b Complex number
-	/// @return Complex Number
-	function sub(Complex memory a, Complex memory b) public pure returns (Complex memory) {
-		Complex memory result = Complex({re: a.re.sub(b.re), im: a.im.sub(b.im)});
-
-		return result;
-	}
-
-	/// @notice MULTIPLICATION
-	/// @param a Complex number
-	/// @param b Complex number
-	/// @return Complex Number
-	function mul(Complex memory a, Complex memory b) public pure returns (Complex memory) {
-		SD59x18 _a = a.re * b.re;
-		SD59x18 _b = a.im * b.im;
-		SD59x18 _c = a.im * b.re;
-		SD59x18 _d = a.re * b.im;
-
-		Complex memory result = Complex({re: _a - _b, im: _c + _d});
-
-		return result;
-	}
-
-	/// @notice DIVISION
-	/// @param a Complex number
-	/// @param b Complex number
-	/// @return Complex Number
-	function div(Complex memory a, Complex memory b) public pure returns (Complex memory) {
-		SD59x18 numA = a.re * b.re + a.im * b.im;
-		SD59x18 numB = a.im * b.re - a.re * b.im;
-		SD59x18 den = sd(b.re.unwrap() ** 2 + b.im.unwrap());
-
-		Complex memory result = Complex({re: numA.div(den), im: numB.div(den)});
-
-		return result;
-	}
-
-	/// @notice CALCULATE HYPOTENUSE
-	/// @dev r^2 = a^2 + b^2
-	/// @param a a
-	/// @param b b
-	/// @return r r
-	function r2(SD59x18 a, SD59x18 b) public pure returns (SD59x18) {
-		a = a.mul(a);
-		b = b.mul(b);
-
-		return (a + b).abs().sqrt();
-	}
-
-	/// @notice CONVERT COMPLEX NUMBER TO POLAR COORDINATES
-	/// @dev WARNING R2 FUNCTION ALWAYS RETURNS POSITIVE VALUES => ELSE{code} IS UNREACHABLE
-	/// @dev // atan vs atan2
-	/// @return r r
-	/// @return T theta
-	function toPolar(Complex memory a) public pure returns (SD59x18, SD59x18) {
-		SD59x18 r = r2(a.re, a.im);
-		SD59x18 T = p_atan2(a.im, a.re);
-
-		return (r, T);
-	}
-
-	/// @notice CONVERT FROM POLAR TO COMPLEX
-	/// @dev https://github.com/rust-num/num-complex/blob/3a89daa2c616154035dd27d706bf7938bcbf30a8/src/lib.rs#L182
-	/// @param r r
-	/// @param T theta
-	/// @return a Complex number
-	function fromPolar(SD59x18 r, SD59x18 T) public pure returns (Complex memory a) {
-		// @dev check if T is negative
-		if (T.unwrap() > 0) {
-			a.re = (r * sd(Trigonometry.cos(uint256(T.unwrap()))));
-			a.im = (r * sd(Trigonometry.sin(uint256(T.unwrap()))));
-		} else {
-			a.re = -(r * sd(Trigonometry.cos(uint256(-T.unwrap()))));
-			a.im = -(r * sd(Trigonometry.sin(uint256(-T.unwrap()))));
-		}
-
-		return a;
-	}
-
-	/// @notice ATAN2(Y,X) FUNCTION (LESS PRECISE LESS GAS)
-	/// @param y y
-	/// @param x x
-	/// @return T T
-	function atan2(SD59x18 y, SD59x18 x) public pure returns (SD59x18 T) {
-		SD59x18 c1 = sd(3141592653589793300 / 4);
-		SD59x18 c2 = sd(3e18) * c1;
-		SD59x18 abs_y = y.abs();
-
-		if (x.unwrap() >= 0) {
-			SD59x18 r = (x - abs_y) / (x + abs_y);
-			T = (c1 - c1 * r);
-		} else {
-			SD59x18 r = (x + abs_y) / (abs_y - x);
-			T = (c2 - c1 * r);
-		}
-		if (y.unwrap() < 0) {
-			return -T;
-		} else {
-			return T;
-		}
-	}
-
-	/// @notice ATAN2(Y,X) FUNCTION (MORE PRECISE MORE GAS)
-	/// @param y y
-	/// @param x x
-	/// @return T T
-	function p_atan2(SD59x18 y, SD59x18 x) public pure returns (SD59x18 T) {
-		SD59x18 c1 = sd(3141592653589793300 / 4);
-		SD59x18 c2 = sd(3e18) * c1;
-		SD59x18 abs_y = y.abs();
-
-		if (x.unwrap() >= 0) {
-			SD59x18 r = (x - abs_y) / (x + abs_y);
-			T = sd(1963e14) * r.pow(sd(3e18)) - (sd(9817e14) * r) + c1;
-		} else {
-			SD59x18 r = (x + abs_y) / (abs_y - x);
-			T = sd(1963e14) * r.pow(sd(3e18)) - (sd(9817e14) * r) + c2;
-		}
-		if (y.unwrap() < 0) {
-			return -T;
-		} else {
-			return T;
-		}
-	}
-
-	/// @notice PRECISE ATAN2(Y,X) FROM range -1 to 1 (MORE PRECISE LESS GAS)
-	/// @param x (y/x)
-	/// @return T T
-	function atan1to1(int256 x) public pure returns (int256) {
-		int256 y = ((7.85e17 * x) / 1e18) - (((x * (x - 1e18)) / 1e18) * (2.447e17 + ((6.63e16 * x) / 1e18))) / 1e18;
-
-		return y;
-	}
-
-	/// @notice COMPLEX NATURAL LOGARITHM
-	/// @param a Complex number
-	/// @return Complex Number
-	function ln(Complex memory a) public pure returns (Complex memory) {
-		(a.re, a.im) = toPolar(a);
-		a.re = a.re.ln();
-
-		return a;
-	}
-
-	/// @notice COMPLEX SQUARE ROOT
-	/// @dev only works if 0 < re & im
-	/// @param a Complex number
-	/// @return Complex Number
-	function sqrt(Complex memory a) public pure returns (Complex memory) {
-		Complex memory result;
-
-		// if imaginary is 0
-		if (a.im.unwrap() == 0) {
-			// if real is positive
-			if (a.re.unwrap() > 0) {
-				// simple positive real √r, and copy `im` for its sign
-				result = Complex({re: a.re.sqrt(), im: sd(0)});
-			} else {
-				// if real is negative
-				// √(r e^(iπ)) = √r e^(iπ/2) = i√r
-				// √(r e^(-iπ)) = √r e^(-iπ/2) = -i√r
-				SD59x18 sqrtVal = -a.re.sqrt();
-				// if imaginary is positive
-				if (a.im.unwrap() > 0) {
-					result = Complex({re: sd(0), im: sqrtVal});
-				} else {
-					// if imaginary is negative
-					result = Complex({re: sd(0), im: -sqrtVal});
-				}
-			}
-		} else if (a.re.unwrap() == 0) {
-			// √(r e^(iπ/2)) = √r e^(iπ/4) = √(r/2) + i√(r/2)
-			// √(r e^(-iπ/2)) = √r e^(-iπ/4) = √(r/2) - i√(r/2)
-			SD59x18 sqrtPart = (a.im.abs() / sd(2e18)).sqrt();
-			if (a.im.unwrap() > 0) {
-				result = Complex({re: sqrtPart, im: sqrtPart});
-			} else {
-				result = Complex({re: sqrtPart, im: -sqrtPart});
-			}
-		} else {
-			// formula: sqrt(r e^(it)) = sqrt(r) e^(it/2)
-			(SD59x18 r, SD59x18 T) = toPolar(a);
-			result = fromPolar(r.sqrt(), T.div(sd(2e18)));
-		}
-
-		return result;
-	}
-
-	/// @notice COMPLEX EXPONENTIAL
-	/// @dev e^(a + bi) = e^a (cos(b) + i*sin(b))
-	/// @param a Complex number
-	/// @return Complex Number
-	function exp(Complex memory a) public pure returns (Complex memory) {
-		SD59x18 r = a.re.exp();
-		Complex memory result = fromPolar(r, a.im);
-
-		return result;
-	}
-
-	/// @notice COMPLEX POWER
-	/// @dev using Demoivre's formula
-	/// @dev overflow risk
-	/// @param a Complex number
-	/// @param n base 1e18
-	/// @return Complex number
-	function pow(Complex memory a, SD59x18 n) public pure returns (Complex memory) {
-		(SD59x18 r, SD59x18 theta) = toPolar(a);
-
-		// gas savings
-		SD59x18 rTOn = r.pow(n);
-		SD59x18 nTheta = n * theta;
-
-		Complex memory result = Complex({
-			re: rTOn * sd(Trigonometry.cos(uint256(nTheta.unwrap()))),
-			im: rTOn * sd(Trigonometry.sin(uint256(nTheta.unwrap())))
-		});
-
-		return result;
-	}
+/// @notice A signed 59.18-decimal fixed-point complex number.
+/// @param re Real component.
+/// @param im Imaginary component.
+struct Complex {
+    SD59x18 re;
+    SD59x18 im;
 }
 
-contract model {
-	Num_Complex num_complex;
+/// @title ComplexMath
+/// @notice Gas-conscious complex arithmetic for signed 59.18-decimal fixed-point numbers.
+/// @dev Functions are internal so the compiler can inline them into consuming contracts.
+library ComplexMath {
+    int256 internal constant UNIT = 1e18;
+    int256 internal constant PI = 3_141592653589793238;
+    int256 internal constant TWO_PI = 6_283185307179586476;
+    int256 internal constant PI_OVER_TWO = 1_570796326794896619;
+    int256 internal constant PI_OVER_FOUR = 785398163397448309;
+    int256 internal constant ATAN_A = 244_700_000_000_000_000;
+    int256 internal constant ATAN_B = 66_300_000_000_000_000;
 
-	Num_Complex.Complex a = Num_Complex.Complex({re: sd(1e18), im: sd(1e18)});
+    error ComplexDivisionByZero();
 
-	function test() public returns (Num_Complex.Complex memory) {
-		Num_Complex.Complex memory result = num_complex.ln(a);
+    /// @notice Creates a complex number from its components.
+    function complex(SD59x18 re, SD59x18 im) internal pure returns (Complex memory) {
+        return Complex({ re: re, im: im });
+    }
 
-		return result;
-	}
+    /// @notice Returns the real and imaginary components.
+    function components(Complex memory value) internal pure returns (SD59x18 re, SD59x18 im) {
+        return (value.re, value.im);
+    }
+
+    /// @notice Adds two complex numbers.
+    function add(Complex memory a, Complex memory b) internal pure returns (Complex memory) {
+        return Complex({ re: a.re + b.re, im: a.im + b.im });
+    }
+
+    /// @notice Subtracts `b` from `a`.
+    function sub(Complex memory a, Complex memory b) internal pure returns (Complex memory) {
+        return Complex({ re: a.re - b.re, im: a.im - b.im });
+    }
+
+    /// @notice Returns the additive inverse of `value`.
+    function neg(Complex memory value) internal pure returns (Complex memory) {
+        return Complex({ re: -value.re, im: -value.im });
+    }
+
+    /// @notice Returns the complex conjugate.
+    function conjugate(Complex memory value) internal pure returns (Complex memory) {
+        return Complex({ re: value.re, im: -value.im });
+    }
+
+    /// @notice Multiplies two complex numbers.
+    function mul(Complex memory a, Complex memory b) internal pure returns (Complex memory) {
+        SD59x18 ac = a.re * b.re;
+        SD59x18 bd = a.im * b.im;
+        return Complex({ re: ac - bd, im: (a.re * b.im) + (a.im * b.re) });
+    }
+
+    /// @notice Squares a complex number with three fixed-point multiplications instead of four.
+    function square(Complex memory value) internal pure returns (Complex memory) {
+        SD59x18 reSquared = value.re * value.re;
+        SD59x18 imSquared = value.im * value.im;
+        SD59x18 product = value.re * value.im;
+        return Complex({ re: reSquared - imSquared, im: product + product });
+    }
+
+    /// @notice Divides `a` by `b` using Smith's overflow-resistant algorithm.
+    /// @dev The ratio is bounded by one, avoiding the potentially overflowing `b.re² + b.im²` denominator.
+    function div(Complex memory a, Complex memory b) internal pure returns (Complex memory result) {
+        if (b.re.unwrap() == 0 && b.im.unwrap() == 0) revert ComplexDivisionByZero();
+
+        if (b.re.abs() >= b.im.abs()) {
+            SD59x18 ratio = b.im / b.re;
+            SD59x18 denominator = b.re + (b.im * ratio);
+            result.re = (a.re + (a.im * ratio)) / denominator;
+            result.im = (a.im - (a.re * ratio)) / denominator;
+        } else {
+            SD59x18 ratio = b.re / b.im;
+            SD59x18 denominator = b.im + (b.re * ratio);
+            result.re = ((a.re * ratio) + a.im) / denominator;
+            result.im = ((a.im * ratio) - a.re) / denominator;
+        }
+    }
+
+    /// @notice Returns `re² + im²`.
+    /// @dev This is cheaper than `magnitude` but can overflow for very large components.
+    function normSquared(Complex memory value) internal pure returns (SD59x18) {
+        return (value.re * value.re) + (value.im * value.im);
+    }
+
+    /// @notice Returns the Euclidean magnitude without first squaring the largest component.
+    function magnitude(Complex memory value) internal pure returns (SD59x18) {
+        SD59x18 reAbs = value.re.abs();
+        SD59x18 imAbs = value.im.abs();
+        bool realIsLargest = reAbs >= imAbs;
+        SD59x18 largest = realIsLargest ? reAbs : imAbs;
+        if (largest.unwrap() == 0) return sd(0);
+
+        SD59x18 smallest = realIsLargest ? imAbs : reAbs;
+        SD59x18 ratio = smallest / largest;
+        return largest * (sd(UNIT) + (ratio * ratio)).sqrt();
+    }
+
+    /// @notice Converts a complex number to `(magnitude, angle)` polar coordinates.
+    /// @dev The angle lies in `[-pi, pi]`. The zero value has angle zero.
+    function toPolar(Complex memory value) internal pure returns (SD59x18 radius, SD59x18 theta) {
+        return (magnitude(value), atan2(value.im, value.re));
+    }
+
+    /// @notice Constructs `radius * (cos(theta) + i * sin(theta))`.
+    /// @dev Signed and arbitrarily large angles are reduced modulo `2*pi` before conversion.
+    function fromPolar(SD59x18 radius, SD59x18 theta) internal pure returns (Complex memory) {
+        uint256 normalized = _normalizeAngle(theta.unwrap());
+        (int256 sine, int256 cosine) = Trigonometry.sinCos(normalized);
+        return Complex({ re: radius * sd(cosine), im: radius * sd(sine) });
+    }
+
+    /// @notice Approximates `atan2(y, x)` with maximum polynomial error around 0.0015 radians.
+    /// @dev Returns zero for `(0, 0)`, matching common numerical-library behavior.
+    function atan2(SD59x18 y, SD59x18 x) internal pure returns (SD59x18) {
+        int256 yRaw = y.unwrap();
+        int256 xRaw = x.unwrap();
+        if (yRaw == 0) return xRaw < 0 ? sd(PI) : sd(0);
+        if (xRaw == 0) return yRaw > 0 ? sd(PI_OVER_TWO) : sd(-PI_OVER_TWO);
+
+        SD59x18 angle;
+        if (x.abs() >= y.abs()) {
+            angle = atanUnit(y / x);
+            if (xRaw < 0) angle = yRaw > 0 ? angle + sd(PI) : angle - sd(PI);
+        } else {
+            angle = (yRaw > 0 ? sd(PI_OVER_TWO) : sd(-PI_OVER_TWO)) - atanUnit(x / y);
+        }
+        return angle;
+    }
+
+    /// @notice Approximates `atan(x)` for `x` in `[-1, 1]`.
+    function atanUnit(SD59x18 x) internal pure returns (SD59x18) {
+        SD59x18 absX = x.abs();
+        return (sd(PI_OVER_FOUR) * x) - (x * (absX - sd(UNIT)) * (sd(ATAN_A) + (sd(ATAN_B) * absX)));
+    }
+
+    /// @notice Returns the principal natural logarithm `ln(|z|) + i*arg(z)`.
+    function ln(Complex memory value) internal pure returns (Complex memory) {
+        (SD59x18 radius, SD59x18 theta) = toPolar(value);
+        return Complex({ re: radius.ln(), im: theta });
+    }
+
+    /// @notice Returns the principal square root, whose real component is non-negative.
+    function sqrt(Complex memory value) internal pure returns (Complex memory result) {
+        int256 reRaw = value.re.unwrap();
+        int256 imRaw = value.im.unwrap();
+
+        if (imRaw == 0) {
+            if (reRaw >= 0) return Complex({ re: value.re.sqrt(), im: sd(0) });
+            return Complex({ re: sd(0), im: (-value.re).sqrt() });
+        }
+
+        SD59x18 radius = magnitude(value);
+        result.re = ((radius + value.re) / sd(2e18)).sqrt();
+        SD59x18 imaginaryMagnitude = ((radius - value.re) / sd(2e18)).sqrt();
+        result.im = imRaw > 0 ? imaginaryMagnitude : -imaginaryMagnitude;
+    }
+
+    /// @notice Returns `e^value`.
+    function exp(Complex memory value) internal pure returns (Complex memory) {
+        return fromPolar(value.re.exp(), value.im);
+    }
+
+    /// @notice Raises `value` to a signed 59.18-decimal fixed-point exponent.
+    function pow(Complex memory value, SD59x18 exponent) internal pure returns (Complex memory) {
+        if (value.re.unwrap() == 0 && value.im.unwrap() == 0) {
+            int256 exponentRaw = exponent.unwrap();
+            if (exponentRaw < 0) revert ComplexDivisionByZero();
+            if (exponentRaw == 0) return Complex({ re: sd(UNIT), im: sd(0) });
+            return Complex({ re: sd(0), im: sd(0) });
+        }
+
+        (SD59x18 radius, SD59x18 theta) = toPolar(value);
+        return fromPolar(radius.pow(exponent), exponent * theta);
+    }
+
+    /// @notice Raises `value` to an unsigned integer exponent using exponentiation by squaring.
+    /// @dev Prefer this overload for integer powers: it avoids logarithms and trigonometry.
+    function powu(Complex memory value, uint256 exponent) internal pure returns (Complex memory result) {
+        result = Complex({ re: sd(UNIT), im: sd(0) });
+        bool resultIsOne = true;
+        while (exponent != 0) {
+            if (exponent & 1 != 0) {
+                result = resultIsOne ? value : mul(result, value);
+                resultIsOne = false;
+            }
+            exponent >>= 1;
+            if (exponent != 0) value = square(value);
+        }
+    }
+
+    function _normalizeAngle(int256 angle) private pure returns (uint256) {
+        int256 normalized = angle % TWO_PI;
+        if (normalized < 0) normalized += TWO_PI;
+        return uint256(normalized);
+    }
 }
