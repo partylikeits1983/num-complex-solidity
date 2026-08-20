@@ -1,6 +1,7 @@
 artifacts/
 cache/
 node_modules/
+target/
 coverage/
 out/
 broadcast/

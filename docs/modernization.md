@@ -14,5 +14,7 @@
   conservative error envelopes, and test composite operations against generated vectors.
 - Add bounded invariant tests for square roots, polar and division round trips, conjugates, norms, and integer powers.
 - Commit stable gas benchmarks and enforce a three-percent regression threshold in CI.
+- Remove Node.js from development and CI, pin PRBMath as a Foundry submodule, and implement the high-precision oracle
+  with locked Rust complex arithmetic.
 - Complete and document an independent internal numerical/security review, including the resulting boundary fixes and
   residual production risks.

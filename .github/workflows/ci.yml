@@ -15,17 +15,28 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
 
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Set up Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 22.21.1
-          cache: npm
+          submodules: recursive
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@032958afbdc797a9164d3bc0b56325c1308924a5 # Rust 1.97.1
+        with:
+          toolchain: 1.97.1
+          components: clippy,rustfmt
+
+      - name: Cache Rust dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: rust-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
 
       - name: Set up Foundry
         uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
@@ -33,26 +44,28 @@ jobs:
           version: v1.7.1
           cache: true
 
-      - name: Install dependencies
-        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Check Solidity formatting
+        run: forge fmt --check
 
-      - name: Check formatting
-        run: npm run fmt
+      - name: Check Rust formatting and lints
+        run: |
+          cargo fmt --all -- --check
+          cargo clippy --locked --all-targets -- -D warnings
 
       - name: Build without warnings
         run: forge build --deny warnings
 
       - name: Check high-precision oracle vectors
-        run: npm run oracle:check
+        run: cargo run --locked --release --bin oracle
 
       - name: Run unit and invariant tests
-        run: npm test
+        run: forge test
 
       - name: Run extended fuzz tests
-        run: npm run test:fuzz
+        run: forge test --fuzz-runs 10000
 
-      - name: Compile a clean package consumer
-        run: npm run package:check
+      - name: Run package-style consumer test
+        run: forge test --match-path test/e2e/ConsumerE2E.t.sol
 
       - name: Check gas snapshot
-        run: npm run snapshot:check
+        run: forge snapshot --check --tolerance 3 --match-test '^testGas'

@@ -1,7 +1,7 @@
 [profile.default]
 src = "contracts"
 test = "test"
-libs = ["node_modules"]
+libs = ["lib"]
 solc_version = "0.8.36"
 evm_version = "prague"
 optimizer = true

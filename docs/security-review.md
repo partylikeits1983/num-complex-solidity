@@ -23,7 +23,7 @@ inputs causing unexpected reverts, approximation error, and gas regressions.
 | Medium | `atan2` rejected `int256.min` components because signed absolute value is not representable. | Replaced signed absolute-value ratios with unsigned-magnitude 512-bit division. |
 | Medium | `pow` could overflow before reducing phase and needlessly approximated exponents zero and one. | Reduced phase before conversion and added exact zero/one shortcuts. |
 | Medium | `atanUnit` accepted values outside the polynomial's proven interval. | Added an explicit domain check and custom error. |
-| Medium | The PR had no enforceable oracle, invariant, package, or gas-regression checks. | Added generated high-precision vectors, bounded fuzz invariants, clean-package compilation, and pinned CI. |
+| Medium | The PR had no enforceable oracle, invariant, consumer, or gas-regression checks. | Added a locked Rust oracle, generated high-precision vectors, bounded fuzz invariants, a Foundry package-style consumer test, and pinned CI. |
 
 ## Residual risks
 

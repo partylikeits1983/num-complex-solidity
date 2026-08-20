@@ -46,10 +46,11 @@ constant. A zero radius returns zero without inspecting its irrelevant phase.
 Run:
 
 ```sh
-npm run oracle:check
-npm test
-npm run test:fuzz
+cargo run --locked --release --bin oracle
+forge test
+forge test --fuzz-runs 10000
 ```
 
-`oracle:check` recomputes the analytic envelopes with 80-decimal arithmetic, regenerates 64 high-precision vectors in
-memory, and fails if the committed Solidity fixture differs.
+The locked Rust oracle uses 320-bit `rug` real and complex arithmetic, recomputes the analytic envelopes, regenerates
+65 high-precision vectors in memory, and fails if the committed Solidity fixture differs. Pass `-- --write` to update
+the fixture after reviewing an intentional numerical change.

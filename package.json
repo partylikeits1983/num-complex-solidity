@@ -16,26 +16,7 @@
     "docs",
     "README.md"
   ],
-  "scripts": {
-    "build": "forge build",
-    "test": "forge test",
-    "test:fuzz": "forge test --fuzz-runs 10000",
-    "gas": "forge test --gas-report",
-    "oracle:check": "node scripts/generate-oracle-vectors.mjs",
-    "oracle:write": "node scripts/generate-oracle-vectors.mjs --write",
-    "package:check": "node scripts/check-package.mjs",
-    "snapshot": "forge snapshot --match-test '^testGas'",
-    "snapshot:check": "forge snapshot --check --tolerance 3 --match-test '^testGas'",
-    "fmt": "node scripts/check-format.mjs",
-    "fmt:write": "forge fmt"
-  },
   "dependencies": {
     "@prb/math": "4.2.0"
-  },
-  "engines": {
-    "node": ">=20"
-  },
-  "devDependencies": {
-    "decimal.js": "10.6.0"
   }
 }

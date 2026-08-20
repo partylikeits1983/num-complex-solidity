@@ -7,11 +7,26 @@ state-free helper contract. The compiler inlines only the functions a consumer u
 
 ## Install
 
+Foundry consumers can install both pinned source dependencies:
+
+```sh
+forge install num-complex-solidity=partylikeits1983/num-complex-solidity prb-math=PaulRBerg/prb-math@v4.2.0
+```
+
+Add these remappings:
+
+```text
+@prb/math/=lib/prb-math/
+num_complex_solidity/=lib/num-complex-solidity/
+```
+
+The existing npm distribution remains available for consumers that resolve Solidity packages through `node_modules`:
+
 ```sh
 npm install num_complex_solidity @prb/math
 ```
 
-Foundry users should make both packages resolvable from `node_modules`:
+For that installation method, use:
 
 ```text
 @prb/math/=node_modules/@prb/math/
@@ -72,7 +87,7 @@ The optimizer uses 1,000 runs and the IR pipeline. Representative Prague-EVM gas
 | `sqrt` for `3 + 4i` | 5,224 |
 | `powu(..., 5)` | 6,501 |
 
-Run `npm run gas` to reproduce the report. These figures include ABI dispatch and vary with compiler, optimizer, inputs,
+Run `forge test --gas-report` to reproduce the report. These figures include ABI dispatch and vary with compiler, optimizer, inputs,
 and the consuming contract. They should not be compared directly with the version 1 README's estimates, whose compiler
 settings and measurement method were not recorded.
 
@@ -96,21 +111,24 @@ that constructed assertions without executing them.
 
 ## Development
 
-Install [Foundry](https://getfoundry.sh/) and Node.js 20 or newer, then run:
+Install Foundry 1.7.1 and Rust. The repository pins Rust 1.97.1 and PRBMath v4.2.0. Initialize the dependency
+submodule, then run:
 
 ```sh
-npm install
-npm test
-npm run test:fuzz
-npm run oracle:check
-npm run package:check
-npm run fmt
-npm run gas
-npm run snapshot:check
+git submodule update --init --recursive
+forge build --deny warnings
+forge test
+forge test --fuzz-runs 10000
+cargo run --locked --release --bin oracle
+forge test --match-path test/e2e/ConsumerE2E.t.sol
+forge test --gas-report
+forge snapshot --check --tolerance 3 --match-test '^testGas'
 ```
 
-The end-to-end test imports the repository through its package name and calls the inlined library from a deployed
-consumer contract.
+Foundry owns contract formatting, builds, tests, fuzzing, the package-style consumer test, and gas snapshots. The only
+non-Solidity tool is the locked Rust oracle, which uses 320-bit `rug` complex arithmetic to regenerate and verify the
+committed comparison vectors. Node.js is not used by development or CI; `package.json` remains solely as publication
+metadata for existing npm consumers.
 
 ## Accuracy and security
 

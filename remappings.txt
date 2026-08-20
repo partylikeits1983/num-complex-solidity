@@ -1,2 +1,2 @@
-@prb/math/=node_modules/@prb/math/
+@prb/math/=lib/prb-math/
 num_complex_solidity/=./
