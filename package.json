@@ -26,7 +26,7 @@
     "package:check": "node scripts/check-package.mjs",
     "snapshot": "forge snapshot --match-test '^testGas'",
     "snapshot:check": "forge snapshot --check --tolerance 3 --match-test '^testGas'",
-    "fmt": "forge fmt --check",
+    "fmt": "node scripts/check-format.mjs",
     "fmt:write": "forge fmt"
   },
   "dependencies": {

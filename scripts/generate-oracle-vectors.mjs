@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 import Decimal from "decimal.js";
@@ -347,12 +346,6 @@ ${returnBranches(powVectors)}
     }
 }
 `;
-const formattedGenerated = execFileSync("forge", ["fmt", "--raw", "-"], {
-    cwd: root,
-    encoding: "utf8",
-    input: generated,
-});
-
 const trigBound = analyzeTrigTable();
 const atanBound = analyzeAtan();
 if (trigBound.greaterThan(TRIG_ENVELOPE)) {
@@ -364,8 +357,8 @@ if (atanBound.greaterThan(ATAN_ENVELOPE)) {
 
 if (process.argv.includes("--write")) {
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-    fs.writeFileSync(outputPath, formattedGenerated);
-} else if (!fs.existsSync(outputPath) || fs.readFileSync(outputPath, "utf8") !== formattedGenerated) {
+    fs.writeFileSync(outputPath, generated);
+} else if (!fs.existsSync(outputPath) || fs.readFileSync(outputPath, "utf8") !== generated) {
     throw new Error("Oracle vectors are stale; run `npm run oracle:write`");
 }
 
