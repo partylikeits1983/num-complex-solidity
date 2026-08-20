@@ -68,8 +68,8 @@ The optimizer uses 1,000 runs and the IR pipeline. Representative Prague-EVM gas
 | `add` | 1,419 |
 | `square` | 2,207 |
 | `mul` | 2,912 |
-| `div` | 8,279 |
-| `sqrt` for `3 + 4i` | 5,230 |
+| `div` | 8,435 |
+| `sqrt` for `3 + 4i` | 5,224 |
 | `powu(..., 5)` | 6,501 |
 
 Run `npm run gas` to reproduce the report. These figures include ABI dispatch and vary with compiler, optimizer, inputs,

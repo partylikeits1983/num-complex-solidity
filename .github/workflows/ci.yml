@@ -40,7 +40,7 @@ jobs:
         run: npm run fmt
 
       - name: Build without warnings
-        run: forge build --deny-warnings
+        run: forge build --deny warnings
 
       - name: Check high-precision oracle vectors
         run: npm run oracle:check

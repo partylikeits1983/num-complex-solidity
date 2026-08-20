@@ -47,7 +47,7 @@ library Trigonometry {
     // of 2^(32/4) + 1 = 257, where the first and last entries are equivalent (hence the table size of
     // 256 defined above)
     uint8 constant ENTRY_BYTES = 4; // each entry in the lookup table is 4 bytes
-    uint256 constant ENTRY_MASK = ((1 << (8 * ENTRY_BYTES)) - 1); // mask used to cast bytes32 -> lookup table entry
+    uint256 constant ENTRY_MASK = ((uint256(1) << (8 * ENTRY_BYTES)) - 1); // mask used to cast bytes32 -> lookup table entry
     bytes constant SIN_TABLE =
         hex"0000000000c90f8801921d20025b26d703242abf03ed26e604b6195d057f00350647d97c0710a34507d95b9e08a2009a096a90490a3308bc0afb68050bc3ac350c8bd35e0d53db920e1bc2e40ee387660fab272b1072a0481139f0cf120116d512c8106e138edbb1145576b1151bdf8515e2144416a81305176dd9de183366e818f8b83c19bdcbf31a82a0251b4732ef1c0b826a1ccf8cb31d934fe51e56ca1e1f19f97b1fdcdc1b209f701c2161b39f2223a4c522e541af23a6887e2467775725280c5d25e845b626a8218527679df42826b92828e5714a29a3c4852a61b1012b1f34eb2bdc4e6f2c98fbba2d553afb2e110a622ecc681e2f8752623041c76030fbc54d31b54a5d326e54c73326e2c233def2873496824f354d905636041ad936ba2013376f9e46382493b038d8fe93398cdd323a402dd13af2eeb73ba51e293c56ba703d07c1d53db832a53e680b2c3f1749b73fc5ec974073f21d4121589a41ce1e64427a41d04325c13543d09aec447acd50452456bc45cd358f46756827471cece647c3c22e4869e664490f57ee49b415334a581c9d4afb6c974b9e038f4c3fdff34ce100344d8162c34e2106174ebfe8a44f5e08e24ffb654c5097fc5e5133cc9451ced46e5269126e53028517539b2aef5433027d54ca0a4a556040e255f5a4d2568a34a9571deef957b0d2555842dd5458d40e8c5964649759f3de125a8279995b1035ce5b9d11535c290acc5cb420df5d3e52365dc79d7b5e50015d5ed77c895f5e0db25fe3b38d60686cce60ec382f616f146b61f1003e6271fa6862f201ac637114cc63ef328f646c59bf64e889256563bf9165ddfbd266573cbb66cf811f6746c7d767bd0fbc683257aa68a69e806919e31f698c246b69fd614a6a6d98a36adcc9646b4af2786bb812d06c24295f6c8f351b6cf934fb6d6227f96dca0d146e30e3496e96a99c6efb5f116f5f02b16fc1938470231099708378fe70e2cbc571410804719e2cd171fa394872552c8472af05a67307c3cf735f662573b5ebd0740b53fa745f9dd074b2c8837504d3447555bd4b75a585ce75f42c0a7641af3c768e0ea576d9498877235f2c776c4eda77b417df77fab988784033287884841378c7aba17909a92c794a7c11798a23b079c89f6d7a05eeac7a4210d87a7d055a7ab6cba37aef63237b26cb4e7b5d039d7b920b887bc5e28f7bf8882f7c29fbed7c5a3d4f7c894bdd7cb727237ce3ceb17d0f42177d3980eb7d628ac57d8a5f3f7db0fdf77dd6668e7dfa98a77e1d93e97e3f57fe7e5fe4927e7f39567e9d55fb7eba3a387ed5e5c57ef0585f7f0991c37f2191b37f3857f57f4de4507f62368e7f754e7f7f872bf27f97cebc7fa736b37fb563b27fc255957fce0c3d7fd8878d7fe1c76a7fe9cbbf7ff094777ff621817ffa72d07ffd88597fff62157fffffff";
 
@@ -98,8 +98,8 @@ library Trigonometry {
 
     function _lookup(bytes memory table, uint256 angle) private pure returns (int256) {
         unchecked {
-            uint256 interp = (angle >> INTERP_OFFSET) & ((1 << INTERP_WIDTH) - 1);
-            uint256 index = (angle >> INDEX_OFFSET) & ((1 << INDEX_WIDTH) - 1);
+            uint256 interp = (angle >> INTERP_OFFSET) & ((uint256(1) << INTERP_WIDTH) - 1);
+            uint256 index = (angle >> INDEX_OFFSET) & ((uint256(1) << INDEX_WIDTH) - 1);
             bool isOddQuadrant = (angle & QUADRANT_LOW_MASK) == 0;
             bool isNegativeQuadrant = (angle & QUADRANT_HIGH_MASK) != 0;
 
@@ -114,6 +114,8 @@ library Trigonometry {
             uint256 x1 = (packedEntries >> (8 * ENTRY_BYTES)) & ENTRY_MASK;
             uint256 x2 = packedEntries & ENTRY_MASK;
             uint256 interpolation = ((x2 - x1) * interp) >> INTERP_WIDTH;
+            // The lookup table and interpolation are bounded by uint32, so every cast fits int256.
+            // forge-lint: disable-next-line(unsafe-typecast)
             int256 result = isOddQuadrant ? int256(x1) + int256(interpolation) : int256(x2) - int256(interpolation);
             if (isNegativeQuadrant) result = -result;
             return (result * 1e18) / 2_147_483_647;

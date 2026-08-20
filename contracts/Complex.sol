@@ -41,7 +41,9 @@ library ComplexMath {
     int256 internal constant PI_OVER_FOUR = 785398163397448309;
     int256 internal constant ATAN_A = 244_700_000_000_000_000;
     int256 internal constant ATAN_B = 66_300_000_000_000_000;
-    int256 internal constant MAX_ACCURATE_ANGLE = 1e28;
+    uint256 internal constant UNIT_U = 1e18;
+    uint256 internal constant MAX_ACCURATE_ANGLE = 1e28;
+    uint256 internal constant MAX_SIGNED_RAW = (uint256(1) << 255) - 1;
 
     error ComplexDivisionByZero();
     error ComplexAngleOutOfBounds(int256 theta);
@@ -143,7 +145,7 @@ library ComplexMath {
     function fromPolar(SD59x18 radius, SD59x18 theta) internal pure returns (Complex memory) {
         if (radius.unwrap() == 0) return Complex({ re: sd(0), im: sd(0) });
         int256 thetaRaw = theta.unwrap();
-        if (_absRaw(thetaRaw) > uint256(MAX_ACCURATE_ANGLE)) revert ComplexAngleOutOfBounds(thetaRaw);
+        if (_absRaw(thetaRaw) > MAX_ACCURATE_ANGLE) revert ComplexAngleOutOfBounds(thetaRaw);
         uint256 normalized = _normalizeAngle(thetaRaw);
         (int256 sine, int256 cosine) = Trigonometry.sinCos(normalized);
         return Complex({ re: radius * sd(cosine), im: radius * sd(sine) });
@@ -169,7 +171,7 @@ library ComplexMath {
 
     /// @notice Approximates `atan(x)` for `x` in `[-1, 1]`.
     function atanUnit(SD59x18 x) internal pure returns (SD59x18) {
-        if (_absRaw(x.unwrap()) > uint256(UNIT)) revert ComplexAtanInputOutOfBounds(x.unwrap());
+        if (_absRaw(x.unwrap()) > UNIT_U) revert ComplexAtanInputOutOfBounds(x.unwrap());
         SD59x18 absX = x.abs();
         return (sd(PI_OVER_FOUR) * x) - (x * (absX - sd(UNIT)) * (sd(ATAN_A) + (sd(ATAN_B) * absX)));
     }
@@ -248,6 +250,8 @@ library ComplexMath {
     function _normalizeAngle(int256 angle) private pure returns (uint256) {
         int256 normalized = angle % TWO_PI;
         if (normalized < 0) normalized += TWO_PI;
+        // The conditional addition above guarantees a non-negative normalized angle.
+        // forge-lint: disable-next-line(unsafe-typecast)
         return uint256(normalized);
     }
 
@@ -255,12 +259,14 @@ library ComplexMath {
         uint256 xRaw = uint256(x.unwrap());
         uint256 yRaw = uint256(y.unwrap());
         uint256 sum = xRaw + yRaw;
-        uint256 halfUnit = uint256(UNIT / 2);
+        uint256 halfUnit = UNIT_U / 2;
         if (sum <= type(uint256).max / halfUnit) {
             return sd(int256(sqrtUint(sum * halfUnit)));
         }
 
         uint256 averageRoundedUp = (xRaw >> 1) + (yRaw >> 1) + ((xRaw & 1) | (yRaw & 1));
+        // The average of two non-negative SD59x18 values cannot exceed the signed maximum.
+        // forge-lint: disable-next-line(unsafe-typecast)
         return _sqrtNonnegative(sd(int256(averageRoundedUp)));
     }
 
@@ -269,9 +275,15 @@ library ComplexMath {
     }
 
     function _sqrtNonnegativeRaw(uint256 valueRaw) private pure returns (SD59x18) {
-        if (valueRaw <= uint256(type(int256).max / UNIT)) return sd(int256(valueRaw)).sqrt();
+        if (valueRaw <= MAX_SIGNED_RAW / UNIT_U) {
+            // The branch condition proves that valueRaw fits int256.
+            // forge-lint: disable-next-line(unsafe-typecast)
+            return sd(int256(valueRaw)).sqrt();
+        }
 
         uint256 integerRoot = sqrtUint(valueRaw);
+        // sqrt(uint256(int256.max)) * 1e9 remains far below int256.max.
+        // forge-lint: disable-next-line(unsafe-typecast)
         return sd(int256(integerRoot * 1e9));
     }
 
@@ -291,10 +303,10 @@ library ComplexMath {
 
         // This is the overwhelmingly common path and uses PRBMath's optimized 512-by-256 division.
         if (numerator.hi == 0 && denominator.hi == 0) {
-            return mulDiv(numerator.lo, uint256(UNIT), denominator.lo);
+            return mulDiv(numerator.lo, UNIT_U, denominator.lo);
         }
 
-        Uint768 memory dividend = _scale512(numerator, uint256(UNIT));
+        Uint768 memory dividend = _scale512(numerator, UNIT_U);
         uint256 dividendBits = _bitLength(dividend);
         uint256 denominatorBits = _bitLength(denominator);
         if (dividendBits < denominatorBits) return 0;
@@ -436,15 +448,26 @@ library ComplexMath {
         if (resultIsNegative) {
             if (resultAbs > minMagnitude) revert ComplexOverflow();
             if (resultAbs == minMagnitude) return type(int256).min;
+            // The preceding bounds prove that the magnitude fits a positive int256 before negation.
+            // forge-lint: disable-next-line(unsafe-typecast)
             return -int256(resultAbs);
         }
         if (resultAbs >= minMagnitude) revert ComplexOverflow();
+        // The preceding bound proves that the magnitude fits int256.
+        // forge-lint: disable-next-line(unsafe-typecast)
         return int256(resultAbs);
     }
 
     function _absRaw(int256 value) private pure returns (uint256) {
         unchecked {
-            return value < 0 ? uint256(-(value + 1)) + 1 : uint256(value);
+            if (value < 0) {
+                // -(value + 1) is non-negative and adding one after conversion supports int256.min.
+                // forge-lint: disable-next-line(unsafe-typecast)
+                return uint256(-(value + 1)) + 1;
+            }
+            // This branch proves that value is non-negative.
+            // forge-lint: disable-next-line(unsafe-typecast)
+            return uint256(value);
         }
     }
 }
