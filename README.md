@@ -2,8 +2,8 @@
 
 Gas-conscious complex arithmetic for Solidity, built on PRBMath's signed 59.18-decimal fixed-point type.
 
-Version 2 is a breaking modernization. `ComplexMath` is an internal library, so consumers no longer deploy or call a
-state-free helper contract. The compiler inlines only the functions a consumer uses.
+`ComplexMath` is an internal library, so consumers do not deploy a helper contract. The compiler inlines only the
+functions a consumer uses.
 
 ## Install
 
@@ -20,7 +20,7 @@ Add these remappings:
 num_complex_solidity/=lib/num-complex-solidity/
 ```
 
-The existing npm distribution remains available for consumers that resolve Solidity packages through `node_modules`:
+Consumers that resolve Solidity packages through `node_modules` can install from npm:
 
 ```sh
 npm install num_complex_solidity @prb/math
@@ -74,6 +74,33 @@ All library functions are `internal pure`. A contract's deployed bytecode includ
 PRBMath custom errors are propagated for fixed-point domain and overflow failures. Complex division by zero uses
 `ComplexMath.ComplexDivisionByZero`.
 
+## Accuracy and supported domains
+
+`SD59x18` stores signed values with 18 decimal places. Exact arithmetic can revert when a result or required
+intermediate does not fit the underlying signed integer. Transcendental and polar operations add approximation error.
+
+| Approximation | Supported domain | Conservative absolute error |
+| --- | --- | ---: |
+| `Trigonometry.sin`, `cos`, `sinCos` | angle from `0` through `1e10` radians | `4.82e-6` at unit amplitude |
+| `ComplexMath.fromPolar` | signed angle with `|theta| <= 1e10` radians | `|radius| * 4.82e-6`, plus rounding |
+| `ComplexMath.atanUnit` | `|x| <= 1` | `0.00151` radians |
+| `ComplexMath.atan2` | all component pairs; `(0, 0)` returns zero | `0.00151` radians |
+
+Composite-operation constraints:
+
+- `magnitude` and `toPolar` require the mathematical radius to fit `SD59x18`.
+- Non-axis `sqrt` inputs require a representable radius. The extended-range path has less than `1e-9` absolute
+  component granularity above PRBMath's native square-root range.
+- `ln` requires a nonzero input and a representable radius.
+- `exp` underflows to zero below `-41.446531673892822322` and reverts above `133.084258667509499440`. A nonzero result
+  also requires `|im| <= 1e10` radians.
+- `pow` uses the principal polar branch, so phase error can grow by approximately `|exponent| * 0.00151` radians. Use
+  `powu` for unsigned integer exponents.
+- `div` rounds representable components toward zero and reverts for division by zero or an unrepresentable result.
+- `mul`, `square`, and `normSquared` can revert on checked intermediate overflow.
+
+Angles above the documented bound are rejected. A zero radius returns zero without inspecting its irrelevant phase.
+
 ## Gas
 
 The optimizer uses 1,000 runs and the IR pipeline. Representative Prague-EVM gas from the external test harness is:
@@ -87,27 +114,8 @@ The optimizer uses 1,000 runs and the IR pipeline. Representative Prague-EVM gas
 | `sqrt` for `3 + 4i` | 5,224 |
 | `powu(..., 5)` | 6,501 |
 
-Run `forge test --gas-report` to reproduce the report. These figures include ABI dispatch and vary with compiler, optimizer, inputs,
-and the consuming contract. They should not be compared directly with the version 1 README's estimates, whose compiler
-settings and measurement method were not recorded.
-
-The main efficiency changes are inlining instead of an external helper call, a shared sine/cosine lookup, direct
-Cartesian square root, polynomial multiplication instead of general-purpose `pow` inside `atan2`, and the `powu`
-integer fast path.
-
-## Version 1 migration
-
-| Version 1 | Version 2 |
-| --- | --- |
-| Deploy `Num_Complex` | `using ComplexMath for Complex` |
-| `Num_Complex.Complex` | file-level `Complex` |
-| `wrap` / `unwrap` | `complex` / `components` |
-| `r2` | `magnitude` (or `normSquared`) |
-| `p_atan2` / `atan1to1` | `atan2` / `atanUnit` |
-| `pow(value, sd(integer))` | `powu(value, integer)` |
-
-Version 2 also fixes the version 1 division denominator, negative polar angles, negative-real square roots, and tests
-that constructed assertions without executing them.
+Run `forge test --gas-report` to reproduce the report. These figures include ABI dispatch and vary with compiler,
+optimizer, inputs, and the consuming contract.
 
 ## Development
 
@@ -127,16 +135,7 @@ forge snapshot --check --tolerance 3 --match-test '^testGas'
 
 Foundry owns contract formatting, builds, tests, fuzzing, the package-style consumer test, and gas snapshots. The only
 non-Solidity tool is the locked Rust oracle, which uses 320-bit `rug` complex arithmetic to regenerate and verify the
-committed comparison vectors. Node.js is not used by development or CI; `package.json` remains solely as publication
-metadata for existing npm consumers.
-
-## Accuracy and security
-
-The full supported domains of the trigonometric lookup and `atanUnit` approximation have conservative absolute error
-bounds of `4.82e-6` and `0.00151` respectively. Composite operations have additional fixed-point and propagated error.
-See the [accuracy and domain specification](docs/accuracy.md) and [independent internal review](docs/security-review.md).
-
-This internal review is not a third-party audit. Use application-specific tolerances and obtain an independent external
-audit before using the library in value-bearing production systems.
+committed comparison vectors. Node.js is not required for development or CI; `package.json` provides npm publication
+metadata.
 
 Licensed under the MIT License.

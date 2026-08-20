@@ -13,7 +13,6 @@
   },
   "files": [
     "contracts",
-    "docs",
     "README.md"
   ],
   "dependencies": {
