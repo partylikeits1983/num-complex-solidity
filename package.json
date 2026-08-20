@@ -1,5 +1,5 @@
 {
-  "name": "num-complex-solidity",
+  "name": "num_complex_solidity",
   "version": "2.0.0",
   "description": "Gas-conscious complex arithmetic for Solidity using signed 59.18-decimal fixed point",
   "license": "MIT",
@@ -13,6 +13,7 @@
   },
   "files": [
     "contracts",
+    "docs",
     "README.md"
   ],
   "scripts": {
@@ -20,7 +21,11 @@
     "test": "forge test",
     "test:fuzz": "forge test --fuzz-runs 10000",
     "gas": "forge test --gas-report",
-    "snapshot": "forge snapshot",
+    "oracle:check": "node scripts/generate-oracle-vectors.mjs",
+    "oracle:write": "node scripts/generate-oracle-vectors.mjs --write",
+    "package:check": "node scripts/check-package.mjs",
+    "snapshot": "forge snapshot --match-test '^testGas'",
+    "snapshot:check": "forge snapshot --check --tolerance 3 --match-test '^testGas'",
     "fmt": "forge fmt --check",
     "fmt:write": "forge fmt"
   },
@@ -29,5 +34,8 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "decimal.js": "10.6.0"
   }
 }

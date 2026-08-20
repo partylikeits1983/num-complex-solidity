@@ -2,7 +2,7 @@
 pragma solidity 0.8.36;
 
 import { SD59x18, sd } from "@prb/math/src/SD59x18.sol";
-import { Complex, ComplexMath } from "num-complex-solidity/contracts/Complex.sol";
+import { Complex, ComplexMath } from "num_complex_solidity/contracts/Complex.sol";
 
 /// @dev Example downstream contract. Its package-style import is part of the end-to-end test.
 contract SignalProcessor {

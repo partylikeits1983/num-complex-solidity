@@ -8,14 +8,14 @@ state-free helper contract. The compiler inlines only the functions a consumer u
 ## Install
 
 ```sh
-npm install num-complex-solidity @prb/math
+npm install num_complex_solidity @prb/math
 ```
 
 Foundry users should make both packages resolvable from `node_modules`:
 
 ```text
 @prb/math/=node_modules/@prb/math/
-num-complex-solidity/=node_modules/num-complex-solidity/
+num_complex_solidity/=node_modules/num_complex_solidity/
 ```
 
 ## Usage
@@ -25,7 +25,7 @@ num-complex-solidity/=node_modules/num-complex-solidity/
 pragma solidity 0.8.36;
 
 import { SD59x18, sd } from "@prb/math/src/SD59x18.sol";
-import { Complex, ComplexMath } from "num-complex-solidity/contracts/Complex.sol";
+import { Complex, ComplexMath } from "num_complex_solidity/contracts/Complex.sol";
 
 contract Example {
     using ComplexMath for Complex;
@@ -46,13 +46,13 @@ Inputs and outputs use 18 decimals: `1e18` represents `1`, and `-25e17` represen
 | --- | --- | --- |
 | `complex`, `components` | construct/deconstruct | Explicit PRBMath types |
 | `add`, `sub`, `neg`, `conjugate` | basic arithmetic | Exact unless checked arithmetic overflows |
-| `mul`, `square`, `div` | product, optimized square, and quotient | Division uses an overflow-resistant scaled ratio |
+| `mul`, `square`, `div` | product, optimized square, and quotient | Division uses exact 512-bit products and a 768-bit scaled dividend |
 | `normSquared` | `re² + im²` | Cheaper, but intermediate squares can overflow |
 | `magnitude` | `sqrt(re² + im²)` | Scaled algorithm avoids squaring the largest component |
-| `toPolar`, `fromPolar` | Cartesian/polar conversion | Signed angles are reduced modulo `2*pi` |
-| `atan2`, `atanUnit` | argument approximations | About 0.0015 radians maximum polynomial error |
-| `ln`, `sqrt`, `exp` | principal complex functions | `sqrt` works in every quadrant |
-| `pow` | fixed-point exponent | Uses polar form; suitable for fractional exponents |
+| `toPolar`, `fromPolar` | Cartesian/polar conversion | Signed angles up to `1e10` radians are reduced modulo `2*pi` |
+| `atan2`, `atanUnit` | argument approximations | At most 0.00151 radians polynomial error |
+| `ln`, `sqrt`, `exp` | principal complex functions | `sqrt` uses stable components in every quadrant |
+| `pow` | fixed-point exponent | Principal real power; phase error grows with the exponent |
 | `powu` | unsigned integer exponent | Exponentiation by squaring; prefer for integer powers |
 
 All library functions are `internal pure`. A contract's deployed bytecode includes only the reachable implementation.
@@ -68,8 +68,8 @@ The optimizer uses 1,000 runs and the IR pipeline. Representative Prague-EVM gas
 | `add` | 1,419 |
 | `square` | 2,207 |
 | `mul` | 2,912 |
-| `div` | 4,052 |
-| `sqrt` for `3 + 4i` | 6,455 |
+| `div` | 8,279 |
+| `sqrt` for `3 + 4i` | 5,230 |
 | `powu(..., 5)` | 6,501 |
 
 Run `npm run gas` to reproduce the report. These figures include ABI dispatch and vary with compiler, optimizer, inputs,
@@ -102,8 +102,11 @@ Install [Foundry](https://getfoundry.sh/) and Node.js 20 or newer, then run:
 npm install
 npm test
 npm run test:fuzz
+npm run oracle:check
+npm run package:check
 npm run fmt
 npm run gas
+npm run snapshot:check
 ```
 
 The end-to-end test imports the repository through its package name and calls the inlined library from a deployed
@@ -111,8 +114,11 @@ consumer contract.
 
 ## Accuracy and security
 
-This library uses fixed-point approximations and a lookup-table trigonometry implementation. Transcendental results are
-not exact, and rounding compounds across chained operations. Check domain limits in PRBMath, use application-specific
-tolerances, and obtain an independent audit before using the library in value-bearing production systems.
+The full supported domains of the trigonometric lookup and `atanUnit` approximation have conservative absolute error
+bounds of `4.82e-6` and `0.00151` respectively. Composite operations have additional fixed-point and propagated error.
+See the [accuracy and domain specification](docs/accuracy.md) and [independent internal review](docs/security-review.md).
+
+This internal review is not a third-party audit. Use application-specific tolerances and obtain an independent external
+audit before using the library in value-bearing production systems.
 
 Licensed under the MIT License.

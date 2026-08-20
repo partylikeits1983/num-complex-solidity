@@ -1,4 +1,4 @@
-# Modernization plan
+# Version 2 modernization
 
 ## Completed in version 2
 
@@ -7,16 +7,12 @@
 - Correct division, negative polar angles, square roots outside the first quadrant, and zero-axis `atan2` behavior.
 - Reduce expensive transcendental work with a combined sine/cosine lookup, a polynomial `atan2`, Cartesian square root,
   and exponentiation by squaring for integer powers.
-- Add stable magnitude and division algorithms that avoid the most common intermediate-square overflow paths.
+- Add a scaled magnitude algorithm and exact wide complex division without overflowing intermediate squares.
 - Replace ineffective JavaScript assertions with Solidity unit, fuzz, custom-error, gas, and downstream-consumer tests.
 - Remove unused dependencies, vendored legacy PRBMath, generated coverage output, conflicting lockfiles, and stale API docs.
-
-## Follow-up roadmap
-
-- Compare the approximations against a high-precision oracle over the full supported domain and publish error envelopes.
-- Add invariant/property tests for `sqrt(z)^2`, polar round trips, conjugates, and division across bounded domains.
-- Track gas snapshots in CI and require an explanation for statistically meaningful regressions.
-- Add a separately named high-precision argument implementation if applications need tighter error than `atan2` offers.
-- Consider an optional packed, reduced-range representation for storage-heavy applications; keep it separate from
-  `SD59x18` so the default API does not silently lose range.
-- Obtain an independent security and numerical-method review before claiming production readiness.
+- Check the complete trigonometric lookup and `atanUnit` domains against a reproducible high-precision oracle, publish
+  conservative error envelopes, and test composite operations against generated vectors.
+- Add bounded invariant tests for square roots, polar and division round trips, conjugates, norms, and integer powers.
+- Commit stable gas benchmarks and enforce a three-percent regression threshold in CI.
+- Complete and document an independent internal numerical/security review, including the resulting boundary fixes and
+  residual production risks.

@@ -65,6 +65,12 @@ contract ComplexHarness {
     }
 }
 
+contract AtanUnitHarness {
+    function atanUnit(SD59x18 value) external pure returns (SD59x18) {
+        return ComplexMath.atanUnit(value);
+    }
+}
+
 contract ComplexMathTest {
     using ComplexMath for Complex;
 
@@ -104,6 +110,29 @@ contract ComplexMathTest {
         _assertComplex(_complex(1e18, 2e18).div(_complex(3e18, 4e18)), 44e16, 8e16, 2);
     }
 
+    function testDivisionPreservesUnbalancedComponentContribution() public pure {
+        Complex memory result = _complex(0, 1e36).div(_complex(2e18, 1));
+        _assertComplex(result, 249_999_999_999_999_999, 499_999_999_999_999_999_999_999_999_999_999_999, 1);
+    }
+
+    function testDivisionPreservesSubWeiDenominatorProducts() public pure {
+        _assertComplex(_complex(0, 1).div(_complex(2, 1)), 2e17, 4e17, 0);
+    }
+
+    function testDivisionSupportsBalancedMaximumComponents() public pure {
+        int256 maximum = type(int256).max;
+        _assertComplex(_complex(maximum, maximum).div(_complex(maximum, maximum)), 1e18, 0, 0);
+        _assertComplex(_complex(maximum, maximum).div(_complex(1e18, 1e18)), maximum, 0, 1);
+    }
+
+    function testDivisionSupportsMinimumAxisComponents() public pure {
+        int256 minimum = type(int256).min;
+        _assertComplex(_complex(minimum, 0).div(_complex(1e18, 0)), minimum, 0, 0);
+        _assertComplex(_complex(minimum, 0).div(_complex(minimum, 0)), 1e18, 0, 0);
+        _assertComplex(_complex(minimum, minimum).div(_complex(1e18, -1e18)), 0, minimum, 0);
+        _assertComplex(_complex(minimum, minimum).div(_complex(minimum, minimum)), 1e18, 0, 0);
+    }
+
     function testDivisionByZeroUsesCustomError() public {
         (bool success, bytes memory returnData) =
             address(harness).call(abi.encodeCall(ComplexHarness.div, (_complex(1e18, 1e18), _complex(0, 0))));
@@ -129,12 +158,40 @@ contract ComplexMathTest {
         _assertEq(theta.unwrap(), PI);
     }
 
+    function testPolarRejectsAnglesOutsideAccuracyDomain() public {
+        (bool success, bytes memory returnData) =
+            address(harness).call(abi.encodeCall(ComplexHarness.fromPolar, (sd(1e18), sd(1e28 + 1))));
+        _assertFalse(success);
+        bytes4 selector;
+        assembly ("memory-safe") {
+            selector := mload(add(returnData, 0x20))
+        }
+        _assertEq(bytes32(selector), bytes32(ComplexMath.ComplexAngleOutOfBounds.selector));
+    }
+
     function testAtan2EveryQuadrantAndOrigin() public pure {
         _assertApprox(ComplexMath.atan2(sd(1e18), sd(1e18)).unwrap(), PI / 4, ATAN_TOLERANCE);
         _assertApprox(ComplexMath.atan2(sd(1e18), sd(-1e18)).unwrap(), (3 * PI) / 4, ATAN_TOLERANCE);
         _assertApprox(ComplexMath.atan2(sd(-1e18), sd(-1e18)).unwrap(), (-3 * PI) / 4, ATAN_TOLERANCE);
         _assertApprox(ComplexMath.atan2(sd(-1e18), sd(1e18)).unwrap(), -PI / 4, ATAN_TOLERANCE);
         _assertEq(ComplexMath.atan2(sd(0), sd(0)).unwrap(), 0);
+    }
+
+    function testAtan2SupportsMinimumRawInput() public pure {
+        _assertApprox(ComplexMath.atan2(sd(1), sd(type(int256).min)).unwrap(), PI, 1);
+        _assertApprox(ComplexMath.atan2(sd(type(int256).min), sd(1)).unwrap(), -HALF_PI, 1);
+    }
+
+    function testAtanUnitRejectsInputsOutsideApproximationDomain() public {
+        AtanUnitHarness atanHarness = new AtanUnitHarness();
+        (bool success, bytes memory returnData) =
+            address(atanHarness).call(abi.encodeCall(AtanUnitHarness.atanUnit, (sd(1e18 + 1))));
+        _assertFalse(success);
+        bytes4 selector;
+        assembly ("memory-safe") {
+            selector := mload(add(returnData, 0x20))
+        }
+        _assertEq(bytes32(selector), bytes32(ComplexMath.ComplexAtanInputOutOfBounds.selector));
     }
 
     function testSquareRootAcrossQuadrants() public pure {
@@ -144,12 +201,25 @@ contract ComplexMathTest {
         _assertComplex(_complex(0, 4e18).sqrt(), SQRT_TWO, SQRT_TWO, 2);
     }
 
+    function testSquareRootHandlesSubWeiAverageAndExtendedRange() public pure {
+        _assertComplex(_complex(0, 1).sqrt(), 707_106_781, 707_106_781, 1);
+        _assertComplex(_complex(1e60, 1e18).sqrt(), 1e39, 0, 1e9);
+        _assertComplex(_complex(-1e60, 1e18).sqrt(), 0, 1e39, 1e9);
+        Complex memory minimumAxisRoot = _complex(type(int256).min, 0).sqrt();
+        _assertApprox(minimumAxisRoot.re.unwrap(), 0, 0);
+        _assertApprox(minimumAxisRoot.im.unwrap(), 240_615_969_168_004_511_545_033_772_477_625_056_927_000_000_000, 0);
+    }
+
     function testExponentialAndLogarithm() public pure {
         _assertComplex(_complex(0, PI).exp(), -1e18, 0, TRIG_TOLERANCE);
 
         Complex memory result = _complex(1e18, 1e18).ln();
         _assertApprox(result.re.unwrap(), 346_573_590_279_972_654, 20);
         _assertApprox(result.im.unwrap(), PI / 4, ATAN_TOLERANCE);
+    }
+
+    function testExponentialUnderflowIgnoresIrrelevantPhase() public pure {
+        _assertComplex(_complex(-42e18, type(int256).max).exp(), 0, 0, 0);
     }
 
     function testIntegerPowerAvoidsTranscendentals() public pure {
@@ -161,6 +231,17 @@ contract ComplexMathTest {
 
     function testFractionalPower() public pure {
         _assertComplex(_complex(0, 4e18).pow(sd(5e17)), SQRT_TWO, SQRT_TWO, 200_000_000_000);
+    }
+
+    function testUnitMagnitudePowerReducesHugePhaseBeforeMultiplication() public pure {
+        Complex memory result = _complex(0, 1e18).pow(sd(5e76));
+        _assertApprox(result.magnitude().unwrap(), 1e18, TRIG_TOLERANCE);
+    }
+
+    function testPowerZeroAndOneAvoidUnnecessaryPolarRoundTrip() public pure {
+        Complex memory value = _complex(type(int256).max, type(int256).max);
+        _assertComplex(value.pow(sd(0)), 1e18, 0, 0);
+        _assertComplex(value.pow(sd(1e18)), type(int256).max, type(int256).max, 0);
     }
 
     function testFuzzAddThenSubtract(int64 ar, int64 ai, int64 br, int64 bi) public pure {

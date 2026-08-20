@@ -9,7 +9,10 @@ npm run fmt
 npm run build
 npm test
 npm run test:fuzz
+npm run oracle:check
+npm run package:check
 npm run gas
+npm run snapshot:check
 ```
 
 Changes to numerical methods should include representative examples, boundary cases, fuzz properties, an accuracy

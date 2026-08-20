@@ -1,0 +1,6 @@
+ComplexMathTest:testGasAdd() (gas: 7721)
+ComplexMathTest:testGasDivide() (gas: 14493)
+ComplexMathTest:testGasMultiply() (gas: 9500)
+ComplexMathTest:testGasPowu() (gas: 12280)
+ComplexMathTest:testGasSquare() (gas: 8371)
+ComplexMathTest:testGasSquareRoot() (gas: 11479)
