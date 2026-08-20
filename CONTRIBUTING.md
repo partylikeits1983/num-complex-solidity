@@ -1,10 +1,26 @@
-# Contribution Guidelines
+# Contributing
 
-Please ensure your pull request adheres to the following guidelines:
+Install Foundry 1.7.1 and Rust 1.97.1, then initialize the pinned PRBMath submodule:
 
-- Search previous suggestions before making a new one, as yours may be a duplicate.
-- Make sure your contribution is useful before submitting.
+```sh
+git submodule update --init --recursive
+```
 
----
+Before opening a pull request, run:
 
-**Working on your first Pull Request?** You can learn how from this free series [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
+```sh
+forge fmt --check
+cargo fmt --all -- --check
+cargo clippy --locked --all-targets -- -D warnings
+forge build --deny warnings
+forge test
+forge test --fuzz-runs 10000
+cargo run --locked --release --bin oracle
+forge test --match-path test/e2e/ConsumerE2E.t.sol
+forge test --gas-report
+forge snapshot --check --tolerance 3 --match-test '^testGas'
+```
+
+Changes to numerical methods should include representative examples, boundary cases, fuzz properties, an accuracy
+comparison, and a gas comparison. Do not weaken an existing tolerance merely to make a regression pass; explain and
+document any intentional accuracy tradeoff.
